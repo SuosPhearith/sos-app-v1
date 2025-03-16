@@ -9,4 +9,6 @@ class AppRoutes {
   static const String saleInvoice = '/sale-invoice';
   static const String saleOrder = '/sale-order';
   static const String customer = '/customer';
+  static const String newCustomer = '/new-customer';
+  static const String checkIn = '/check-in';
 }

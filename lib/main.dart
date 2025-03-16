@@ -5,8 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:wsm_mobile_app/app_routes.dart';
 import 'package:wsm_mobile_app/middlewares/auth_middleware.dart';
 import 'package:wsm_mobile_app/providers/global/auth_provider.dart';
+import 'package:wsm_mobile_app/screens/check_in_screen.dart';
+import 'package:wsm_mobile_app/screens/customer_screen.dart';
 import 'package:wsm_mobile_app/screens/home_screen.dart';
 import 'package:wsm_mobile_app/screens/login_screen.dart';
+import 'package:wsm_mobile_app/screens/new_customer_screen.dart';
 import 'package:wsm_mobile_app/screens/profile_screen.dart';
 import 'package:wsm_mobile_app/screens/sale_screen.dart';
 import 'package:wsm_mobile_app/screens/select_app_screen.dart';
@@ -44,7 +47,14 @@ class MyApp extends StatelessWidget {
     DioClient.setupInterceptors(context);
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      routerConfig: _router, // Use GoRouter for navigation
+      routerConfig: _router,
+      theme: ThemeData(
+        fontFamily: 'Kantumruy',
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(fontSize: 18), // Custom size if needed
+          bodyMedium: TextStyle(fontSize: 16),
+        ),
+      ),
     );
   }
 }
@@ -85,6 +95,21 @@ final GoRouter _router = GoRouter(
       path: AppRoutes.selectApp,
       builder: (context, state) =>
           AuthMiddleware(child: const AuthLayout(child: SelectAppScreen())),
+    ),
+    GoRoute(
+      path: AppRoutes.checkIn,
+      builder: (context, state) =>
+          AuthMiddleware(child: const AuthLayout(child: CheckInScreen())),
+    ),
+    GoRoute(
+      path: AppRoutes.customer,
+      builder: (context, state) =>
+          AuthMiddleware(child: const AuthLayout(child: CustomerScreen())),
+    ),
+    GoRoute(
+      path: AppRoutes.newCustomer,
+      builder: (context, state) =>
+          AuthMiddleware(child: const AuthLayout(child: NewCustomerScreen())),
     ),
   ],
   errorBuilder: (context, state) => Scaffold(
