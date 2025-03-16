@@ -5,6 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:wsm_mobile_app/app_routes.dart';
 import 'package:wsm_mobile_app/middlewares/auth_middleware.dart';
 import 'package:wsm_mobile_app/providers/global/auth_provider.dart';
+import 'package:wsm_mobile_app/providers/global/cart_provider.dart';
+import 'package:wsm_mobile_app/providers/global/selected_customer_provider.dart';
+import 'package:wsm_mobile_app/screens/cart_screen.dart';
 import 'package:wsm_mobile_app/screens/check_in_screen.dart';
 import 'package:wsm_mobile_app/screens/customer_screen.dart';
 import 'package:wsm_mobile_app/screens/home_screen.dart';
@@ -12,8 +15,6 @@ import 'package:wsm_mobile_app/screens/login_screen.dart';
 import 'package:wsm_mobile_app/screens/new_customer_screen.dart';
 import 'package:wsm_mobile_app/screens/profile_screen.dart';
 import 'package:wsm_mobile_app/screens/sale_screen.dart';
-import 'package:wsm_mobile_app/screens/select_app_screen.dart';
-import 'package:wsm_mobile_app/screens/todo_screen.dart';
 import 'package:wsm_mobile_app/utils/dio.client.dart';
 
 void main() async {
@@ -33,6 +34,8 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => SelectedCustomerProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
       ],
       child: const MyApp(),
     ),
@@ -74,9 +77,6 @@ final GoRouter _router = GoRouter(
             path: AppRoutes.home,
             builder: (context, state) => const HomeScreen()),
         GoRoute(
-            path: AppRoutes.todo,
-            builder: (context, state) => const TodoScreen()),
-        GoRoute(
             path: AppRoutes.sale,
             builder: (context, state) => const SaleScreen()),
         GoRoute(
@@ -92,11 +92,6 @@ final GoRouter _router = GoRouter(
           AuthMiddleware(child: const AuthLayout(child: LoginScreen())),
     ),
     GoRoute(
-      path: AppRoutes.selectApp,
-      builder: (context, state) =>
-          AuthMiddleware(child: const AuthLayout(child: SelectAppScreen())),
-    ),
-    GoRoute(
       path: AppRoutes.checkIn,
       builder: (context, state) =>
           AuthMiddleware(child: const AuthLayout(child: CheckInScreen())),
@@ -110,6 +105,11 @@ final GoRouter _router = GoRouter(
       path: AppRoutes.newCustomer,
       builder: (context, state) =>
           AuthMiddleware(child: const AuthLayout(child: NewCustomerScreen())),
+    ),
+    GoRoute(
+      path: AppRoutes.cart,
+      builder: (context, state) =>
+          AuthMiddleware(child: const AuthLayout(child: CartScreen())),
     ),
   ],
   errorBuilder: (context, state) => Scaffold(
@@ -131,7 +131,6 @@ class _MainLayoutState extends State<MainLayout> {
 
   final List<Widget> _pages = [
     const HomeScreen(),
-    const TodoScreen(),
     const SaleScreen(),
     const ProfileScreen(),
   ];
@@ -142,6 +141,7 @@ class _MainLayoutState extends State<MainLayout> {
       body: SafeArea(
           child: _pages[_currentIndex]), // Use IndexedStack to preserve state
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() => _currentIndex = index);
@@ -150,11 +150,9 @@ class _MainLayoutState extends State<MainLayout> {
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.grey,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.task), label: "Todo"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_bag), label: "Sale"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "ទំព័រដើម"),
+          BottomNavigationBarItem(icon: Icon(Icons.receipt), label: "វិក្កយបត្រ"),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "គណនី"),
         ],
       ),
     );

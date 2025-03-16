@@ -60,10 +60,9 @@ void showConfirmDialog(
                           await Future(
                               () => onConfirm()); // Execute async action
                           if (context.mounted) {
-                            Navigator.pop(context); // Close dialog on success
-                          } // Close dialog on success
+                            Navigator.pop(context);
+                          }
                         } catch (e) {
-                          // Handle errors and reset loading state
                           setState(() => isLoading = false);
                         }
                       },
@@ -138,6 +137,7 @@ void showErrorDialog(
               ),
               textAlign: TextAlign.center, // Center title
             ),// Spacing before button
+            const SizedBox(height: 16),
             SizedBox(
               width: double.infinity, // Full-width button
               child: TextButton(
@@ -149,6 +149,7 @@ void showErrorDialog(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
+          
                 child: const Text(
                   "យល់ព្រម", // "OK" in Khmer
                   style: TextStyle(

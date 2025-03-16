@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:wsm_mobile_app/app_routes.dart';
+import 'package:wsm_mobile_app/providers/global/selected_customer_provider.dart';
 import 'package:wsm_mobile_app/providers/local/customer_provider.dart';
 
 class CustomerScreen extends StatefulWidget {
@@ -34,10 +35,10 @@ class _CustomerScreenState extends State<CustomerScreen> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => CustomerProvider(),
-      child: Consumer<CustomerProvider>(
-        builder: (context, customerProvider, child) {
+      child: Consumer2<CustomerProvider, SelectedCustomerProvider>(
+        builder: (context, customerProvider, selectedCustomerProvider, child) {
           return Scaffold(
-            backgroundColor: Colors.grey[100],
+            backgroundColor: Colors.grey[200],
             appBar: AppBar(
               backgroundColor: Colors.white,
               title: const Text("អតិថិជន"),
@@ -122,7 +123,11 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                         return CustomerActionItem(
                                           name: customer.name,
                                           phone: customer.phoneNumber,
-                                          onTap: () {},
+                                          onTap: () {
+                                            selectedCustomerProvider
+                                                .setSelectedCustomer(customer);
+                                            context.go(AppRoutes.checkIn);
+                                          },
                                         );
                                       }).toList(),
                                     ),
@@ -169,10 +174,6 @@ class CustomerActionItem extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: Colors.blueGrey,
-            width: 1.0,
-          ),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,

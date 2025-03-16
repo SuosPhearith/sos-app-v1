@@ -37,7 +37,7 @@ class CheckInService {
     String categoryId = '',
     String keyword = '',
     int page = 1,
-    int perPage = 100,
+    int perPage = 50,
   }) async {
     try {
       final response = await DioClient.dio.get(

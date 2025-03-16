@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:wsm_mobile_app/app_routes.dart';
 import 'package:wsm_mobile_app/error_type.dart';
+import 'package:wsm_mobile_app/models/customer_model.dart';
+import 'package:wsm_mobile_app/providers/global/selected_customer_provider.dart';
 import 'package:wsm_mobile_app/services/customer_service.dart';
 import 'package:wsm_mobile_app/utils/help.dart';
 import 'package:wsm_mobile_app/utils/help_util.dart';
@@ -15,7 +18,7 @@ class NewCustomerScreen extends StatefulWidget {
 }
 
 class _NewCustomerScreenState extends State<NewCustomerScreen> {
-  String? _selectedOutletType;
+  String _selectedOutletType = 'retail';
 
   // TextEditingControllers for all fields
   final TextEditingController _customerNameController = TextEditingController();
@@ -42,7 +45,7 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text('បង្កើតអតិថិជន'),
@@ -150,11 +153,12 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                       ),
                       Padding(
                         padding:
-                            const EdgeInsets.only(top: 8, right: 8, left: 8),
+                            const EdgeInsets.only(bottom: 8, right: 8, left: 8),
                         child: SizedBox(
                           height: 50,
                           child: TextField(
                             controller: _phoneController,
+                            keyboardType: TextInputType.phone,
                             decoration: InputDecoration(
                               hintText: 'លេខទូរស័ព្ទអតិថិជន',
                               prefixIcon: const Icon(Icons.phone,
@@ -334,11 +338,12 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                       ),
                       Padding(
                         padding:
-                            const EdgeInsets.only(top: 8, right: 8, left: 8),
+                            const EdgeInsets.only(bottom: 8, right: 8, left: 8),
                         child: SizedBox(
                           height: 50,
                           child: TextField(
                             controller: _secondPhoneController,
+                            keyboardType: TextInputType.phone,
                             decoration: InputDecoration(
                               hintText: 'លេខទូរស័ព្ទទី២',
                               prefixIcon: const Icon(Icons.phone,
@@ -373,11 +378,12 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                       ),
                       Padding(
                         padding:
-                            const EdgeInsets.only(top: 8, right: 8, left: 8),
+                            const EdgeInsets.only(bottom: 8, right: 8, left: 8),
                         child: SizedBox(
                           height: 50,
                           child: TextField(
                             controller: _thirdPhoneController,
+                            keyboardType: TextInputType.phone,
                             decoration: InputDecoration(
                               hintText: 'លេខទូរស័ព្ទទី៣',
                               prefixIcon: const Icon(Icons.phone,
@@ -412,7 +418,7 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                       ),
                       Padding(
                         padding:
-                            const EdgeInsets.only(top: 8, right: 8, left: 8),
+                            const EdgeInsets.only(bottom: 8, right: 8, left: 8),
                         child: SizedBox(
                           height: 50,
                           child: TextField(
@@ -451,7 +457,7 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                       ),
                       Padding(
                         padding:
-                            const EdgeInsets.only(top: 8, right: 8, left: 8),
+                            const EdgeInsets.only(bottom: 8, right: 8, left: 8),
                         child: SizedBox(
                           height: 50,
                           child: TextField(
@@ -490,7 +496,7 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                       ),
                       Padding(
                         padding:
-                            const EdgeInsets.only(top: 8, right: 8, left: 8),
+                            const EdgeInsets.only(bottom: 8, right: 8, left: 8),
                         child: SizedBox(
                           height: 50,
                           child: TextField(
@@ -526,8 +532,7 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                   child: ElevatedButton(
                     onPressed: () async {
                       if (_customerNameController.text.isEmpty ||
-                          _phoneController.text.isEmpty ||
-                          _selectedOutletType == null) {
+                          _phoneController.text.isEmpty ) {
                         return showErrorDialog(
                             context, "ព័ត៌មានមិនគ្រប់គ្រាន់");
                       }
@@ -539,13 +544,28 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                       }
                       try {
                         final cusotmerService = CustomerService();
-                        await cusotmerService.createNewCustomer(
-                            name: _customerNameController.text,
-                            phone: _phoneController.text);
+                        final Map<String, dynamic> res =
+                            await cusotmerService.createNewCustomer(
+                                name: _customerNameController.text,
+                                phone: _phoneController.text);
                         if (context.mounted) {
+                          Provider.of<SelectedCustomerProvider>(context,
+                                  listen: false)
+                              .setSelectedCustomer(Customer(
+                                  id: res['id'] as String,
+                                  phoneNumber: res['phone_number'] as String,
+                                  name: res['name'] as String,
+                                  wholesaleId: res['wholesale_id'] as String,
+                                  createdAt: DateTime.parse(
+                                      res['created_at'] as String),
+                                  updatedAt: DateTime.parse(
+                                      res['updated_at'] as String)));
                           context.go(AppRoutes.checkIn);
                         }
                       } catch (e) {
+                        if (context.mounted) {
+                          showErrorDialog(context, "អតិថិជនមានរួចហើយ");
+                        }
                         printError(errorMessage: ErrorType.somethingWentWrong);
                       }
 
