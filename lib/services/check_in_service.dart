@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:wsm_mobile_app/error_type.dart';
 import 'package:wsm_mobile_app/models/category_model.dart';
 import 'package:wsm_mobile_app/models/pagination_model.dart';
@@ -7,6 +9,8 @@ import 'package:wsm_mobile_app/utils/dio.client.dart';
 import 'package:wsm_mobile_app/utils/help_util.dart';
 
 class CheckInService {
+  final FlutterSecureStorage _storage = FlutterSecureStorage();
+
   Future<List<Category>> getCategories() async {
     try {
       final response = await DioClient.dio.get("/api/mini/product/categories",
@@ -40,8 +44,12 @@ class CheckInService {
     int perPage = 50,
   }) async {
     try {
+      String? posId = await _storage.read(key: 'posId');
+      if (posId == null) {
+        throw Exception();
+      }
       final response = await DioClient.dio.get(
-        "/api/mini/9e5b4d0b-834e-4f31-b8fa-56d6f20fa527/product/search",
+        "/api/mini/$posId/product/search",
         queryParameters: {
           'category_id': categoryId,
           'keyword': keyword,
@@ -76,5 +84,33 @@ class CheckInService {
       printError(errorMessage: 'Something went wrong.', statusCode: 500);
       throw Exception(ErrorType.unexpectedError);
     }
+  }
+
+  Future<Position?> getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Check if location services are enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return null;
+    }
+
+    // Check location permissions
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return null;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return null;
+    }
+
+    // Get the current position
+    return await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
   }
 }

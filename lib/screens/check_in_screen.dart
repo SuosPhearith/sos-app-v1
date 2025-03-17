@@ -5,12 +5,16 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:wsm_mobile_app/app_routes.dart';
+import 'package:wsm_mobile_app/error_type.dart';
 import 'package:wsm_mobile_app/models/cart_modal.dart';
 import 'package:wsm_mobile_app/models/category_model.dart';
+import 'package:wsm_mobile_app/models/check_in_modal.dart';
 import 'package:wsm_mobile_app/models/product_model.dart';
 import 'package:wsm_mobile_app/providers/global/cart_provider.dart';
+import 'package:wsm_mobile_app/providers/global/check_out_provider.dart';
 import 'package:wsm_mobile_app/providers/global/selected_customer_provider.dart';
 import 'package:wsm_mobile_app/providers/local/check_in_provider.dart';
+import 'package:wsm_mobile_app/services/check_out_service.dart';
 import 'package:wsm_mobile_app/utils/type.dart';
 import 'package:wsm_mobile_app/widgets/helper.dart';
 
@@ -50,8 +54,10 @@ class _CheckInScreenState extends State<CheckInScreen> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => CheckInProvider(),
-      child: Consumer2<SelectedCustomerProvider, CartProvider>(
-          builder: (context, selectedCustomerProvider, cartProvider, child) {
+      child:
+          Consumer3<SelectedCustomerProvider, CartProvider, CheckOutProvider>(
+              builder: (context, selectedCustomerProvider, cartProvider,
+                  checkOutProvider, child) {
         final isEnabled = selectedCustomerProvider.selectedCustomer != null;
         return GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
@@ -63,6 +69,9 @@ class _CheckInScreenState extends State<CheckInScreen> {
               leading: IconButton(
                 icon: Icon(Icons.arrow_back),
                 onPressed: () {
+                  if (selectedCustomerProvider.selectedCustomer == null) {
+                    return context.go(AppRoutes.home);
+                  }
                   return showConfirmDialogWithNavigation(
                       context,
                       "បញ្ជាក់ការចេញ",
@@ -80,8 +89,42 @@ class _CheckInScreenState extends State<CheckInScreen> {
                   child: ElevatedButton.icon(
                     onPressed: isEnabled
                         ? () {
-                          context.go(AppRoutes.home);
-                        }
+                            showConfirmDialog(
+                                context,
+                                "បញ្ជាក់ការ Check Out",
+                                "តើអ្នកពិតជាចង់ Check Out មែនទេ?",
+                                DialogType.primary, () async {
+                              try {
+                                final CheckOutService checkOutService =
+                                    CheckOutService();
+                                await checkOutService.checkOut(
+                                    checkIn: CheckIn(
+                                        checkinAt: checkOutProvider
+                                                .checkIn?.checkinAt ??
+                                            '',
+                                        lat: checkOutProvider.checkIn?.lat ??
+                                            0.0,
+                                        lng: checkOutProvider.checkIn?.lng ??
+                                            0.0,
+                                        customerId: selectedCustomerProvider
+                                                .selectedCustomer?.id ??
+                                            ''),
+                                    ordered: checkOutProvider.ordered);
+                                selectedCustomerProvider
+                                    .clearSelectedCustomer();
+                                cartProvider.clearCart();
+                                checkOutProvider.clearOrdered();
+                                if (context.mounted) {
+                                  context.go(AppRoutes.home);
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  showErrorDialog(
+                                      context, ErrorType.somethingWentWrong);
+                                }
+                              }
+                            });
+                          }
                         : () {
                             showErrorDialog(
                               context,
@@ -212,11 +255,11 @@ class _CheckInScreenState extends State<CheckInScreen> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
-                      children: const [
+                      children: [
                         Icon(Icons.shopping_cart),
                         SizedBox(width: 10),
                         Text(
-                          'ដាក់ការបញ្ជារទិញ',
+                          'ដាក់ការបញ្ជារទិញ ${checkOutProvider.ordered.length}',
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),

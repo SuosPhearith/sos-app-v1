@@ -1,6 +1,3 @@
-import 'package:flutter/foundation.dart'; // For @immutable annotation
-
-@immutable
 class Invoice {
   final String orderNo;
   final double grandTotal;
@@ -38,8 +35,6 @@ class Invoice {
     };
   }
 }
-
-@immutable
 class Customer {
   final String id;
   final String name;

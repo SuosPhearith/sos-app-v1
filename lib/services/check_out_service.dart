@@ -1,17 +1,28 @@
 import 'package:dio/dio.dart';
 import 'package:wsm_mobile_app/error_type.dart';
+import 'package:wsm_mobile_app/models/check_in_modal.dart';
 import 'package:wsm_mobile_app/utils/dio.client.dart';
 import 'package:wsm_mobile_app/utils/help_util.dart';
 
-class AuthService {
-  Future<Map<String, dynamic>> login({
-    required String username,
-    required String password,
-  }) async {
+class CheckOutService {
+  Future<Map<String, dynamic>> checkOut(
+      {required CheckIn checkIn, required List<String> ordered}) async {
+    List<Map<String, dynamic>> items = ordered.map((item) {
+      return {
+        'type': 'Order',
+        'id': item,
+      };
+    }).toList();
     try {
       final response = await DioClient.dio.post(
-        "/api/mini/login",
-        data: {"email": username, "password": password},
+        "/api/mobile/advance-checkin",
+        data: {
+          "checkin_at": checkIn.checkinAt,
+          "lat": checkIn.lat,
+          "lng": checkIn.lng,
+          "customer_id": checkIn.customerId,
+          "actions": items
+        },
       );
       return response.data;
     } on DioException catch (dioError) {

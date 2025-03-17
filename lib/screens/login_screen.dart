@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wsm_mobile_app/providers/global/auth_provider.dart';
+import 'package:wsm_mobile_app/widgets/helper.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    _emailController.text = 'C001955.1';
+    _emailController.text = 'admin.001';
     _passwordController.text = '12345678';
     super.initState();
   }
@@ -124,11 +125,18 @@ class _LoginScreenState extends State<LoginScreen> {
                           if (_emailController.text.isEmpty ||
                               _passwordController.text.isEmpty ||
                               authProvider.isLoading) {
-                            return;
+                            return showErrorDialog(
+                                context, "សូមបញ្ចូល Username & Password!");
                           }
-                          authProvider.handleLogin(
-                              username: _emailController.text,
-                              password: _passwordController.text);
+                          try {
+                            await authProvider.handleLogin(
+                                username: _emailController.text,
+                                password: _passwordController.text);
+                          } catch (e) {
+                            if (context.mounted) {
+                              showErrorDialog(context, "Invalid Credetial!");
+                            }
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,

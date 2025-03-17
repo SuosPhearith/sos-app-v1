@@ -55,8 +55,20 @@ class CustomerService {
   }) async {
     try {
       final response = await DioClient.dio.post(
-        "/api/mini/customer",
-        data: {"name": name, "phone_number": phone},
+        "/api/mobile/register-customer",
+        data: {
+          "name": name,
+          "name_kh": null,
+          "phone_number": phone,
+          "village_code": null,
+          "phone_number_2": null,
+          "phone_number_3": null,
+          "street_no": null,
+          "house_no": null,
+          "address_name": null,
+          "lat": null,
+          "lng": null
+        },
       );
       return response.data;
     } on DioException catch (dioError) {

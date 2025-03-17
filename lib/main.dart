@@ -6,11 +6,13 @@ import 'package:wsm_mobile_app/app_routes.dart';
 import 'package:wsm_mobile_app/middlewares/auth_middleware.dart';
 import 'package:wsm_mobile_app/providers/global/auth_provider.dart';
 import 'package:wsm_mobile_app/providers/global/cart_provider.dart';
+import 'package:wsm_mobile_app/providers/global/check_out_provider.dart';
 import 'package:wsm_mobile_app/providers/global/selected_customer_provider.dart';
 import 'package:wsm_mobile_app/screens/cart_screen.dart';
 import 'package:wsm_mobile_app/screens/check_in_screen.dart';
 import 'package:wsm_mobile_app/screens/customer_screen.dart';
 import 'package:wsm_mobile_app/screens/home_screen.dart';
+import 'package:wsm_mobile_app/screens/invoice_detail_screen.dart';
 import 'package:wsm_mobile_app/screens/login_screen.dart';
 import 'package:wsm_mobile_app/screens/new_customer_screen.dart';
 import 'package:wsm_mobile_app/screens/profile_screen.dart';
@@ -36,6 +38,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => SelectedCustomerProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => CheckOutProvider()),
       ],
       child: const MyApp(),
     ),
@@ -111,6 +114,17 @@ final GoRouter _router = GoRouter(
       builder: (context, state) =>
           AuthMiddleware(child: const AuthLayout(child: CartScreen())),
     ),
+    GoRoute(
+      path: '${AppRoutes.invoiceDetail}/:id', // Dynamic ":id" parameter
+      builder: (context, state) {
+        final String invoiceId = state.pathParameters['id'] ?? ''; // Get the ID
+        return AuthMiddleware(
+          child: AuthLayout(
+            child: InvoiceDetailScreen(invoiceId: invoiceId), // Pass to screen
+          ),
+        );
+      },
+    ),
   ],
   errorBuilder: (context, state) => Scaffold(
     body: Center(child: Text('Error: ${state.error}')),
@@ -139,7 +153,8 @@ class _MainLayoutState extends State<MainLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: _pages[_currentIndex]), // Use IndexedStack to preserve state
+        child: _pages[_currentIndex],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         currentIndex: _currentIndex,
@@ -150,8 +165,10 @@ class _MainLayoutState extends State<MainLayout> {
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.grey,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "ទំព័រដើម"),
-          BottomNavigationBarItem(icon: Icon(Icons.receipt), label: "វិក្កយបត្រ"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home_filled), label: "ទំព័រដើម"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.receipt), label: "វិក្កយបត្រ"),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "គណនី"),
         ],
       ),

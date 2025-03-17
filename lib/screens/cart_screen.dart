@@ -5,7 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:wsm_mobile_app/app_routes.dart';
 import 'package:wsm_mobile_app/models/cart_modal.dart';
 import 'package:wsm_mobile_app/providers/global/cart_provider.dart';
+import 'package:wsm_mobile_app/providers/global/check_out_provider.dart';
 import 'package:wsm_mobile_app/providers/global/selected_customer_provider.dart';
+import 'package:wsm_mobile_app/services/cart_service.dart';
+import 'package:wsm_mobile_app/utils/help.dart';
 import 'package:wsm_mobile_app/utils/type.dart';
 import 'package:wsm_mobile_app/widgets/helper.dart'; // Your Cart model
 
@@ -73,7 +76,8 @@ class _CartScreenState extends State<CartScreen> {
                 ),
               ),
               // Bottom Section: Total Amount and Submit Button
-              _buildBottomSection(context, cartProvider, selectedCustomerProvider),
+              _buildBottomSection(
+                  context, cartProvider, selectedCustomerProvider),
             ],
           );
         },
@@ -187,7 +191,8 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   // Bottom Section: Total Amount and Submit Button
-  Widget _buildBottomSection(BuildContext context, CartProvider cartProvider, SelectedCustomerProvider selectedCustomerProvider) {
+  Widget _buildBottomSection(BuildContext context, CartProvider cartProvider,
+      SelectedCustomerProvider selectedCustomerProvider) {
     final totalAmount = cartProvider.cart.fold<double>(
       0.0,
       (sum, item) => sum + (item.unitPrice * item.qty).toDouble(),
@@ -242,119 +247,132 @@ class _CartScreenState extends State<CartScreen> {
             height: 15,
           ),
           // Date and Time in One Row
-          Row(
-            children: [
-              // Delivery Date Field
-              Expanded(
-                child: TextField(
-                  controller: _dateController,
-                  readOnly: true,
-                  onTap: () async {
-                    DateTime? pickedDate = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime(2101),
-                    );
-                    if (pickedDate != null) {
-                      String formattedDate =
-                          "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
-                      setState(() {
-                        _dateController.text = formattedDate;
-                      });
-                    }
-                  },
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.calendar_today),
-                    labelText: 'ថ្ងៃដឹក', // Shortened: "Delivery date"
-                    errorText: _loactoinError,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8), // Smaller radius
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color:
-                            _loactoinError != null ? Colors.red : Colors.black,
-                        width: 1.0,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+          Card(
+            elevation: 0,
+            color: Colors.white,
+            child: TextField(
+              controller: _dateController,
+              readOnly: true, // Prevents manual input
+              onTap: () async {
+                // Show date picker when tapped
+                DateTime? pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(), // Default selected date is today
+                  firstDate:
+                      DateTime.now(), // Earliest selectable date is today
+                  lastDate: DateTime(2101), // Latest selectable date is 2101
+                );
+                if (pickedDate != null) {
+                  // Format the date and set it to the controller
+                  String formattedDate =
+                      "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                  setState(() {
+                    _dateController.text = formattedDate;
+                  });
+                }
+              },
+              decoration: InputDecoration(
+                prefixIcon: const Icon(
+                    Icons.calendar_today), // Changed to calendar icon
+                labelText: 'បញ្ចូលថ្ងៃដឹក', // "Enter delivery date"
+                errorText: _loactoinError, // Show error message
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: _loactoinError != null ? Colors.red : Colors.blue,
+                    width: 1.0, // Red border if error, blue otherwise
                   ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Colors.blue,
+                    width: 2.0, // Border color when focused
+                  ),
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              const SizedBox(width: 10),
-              // Delivery Time Field
-              Expanded(
-                child: TextField(
-                  controller: _timeController,
-                  readOnly: true,
-                  onTap: () async {
-                    TimeOfDay? pickedTime = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                    );
-                    if (pickedTime != null && context.mounted) {
-                      String formattedTime = pickedTime.format(context);
-                      setState(() {
-                        _timeController.text = formattedTime;
-                      });
-                    }
-                  },
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.access_time),
-                    labelText: 'ម៉ោងដឹក', // Shortened: "Delivery time"
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-          const SizedBox(height: 8), // Reduced from 10
-          // Remark Field
-          TextField(
-            controller: _remarkController,
-            decoration: InputDecoration(
-              prefixIcon: const Icon(Icons.note),
-              labelText: 'ចំណាំ', // Shortened: "Remark"
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(
-                  color: Colors.black,
+          SizedBox(
+            height: 10,
+          ),
+          GestureDetector(
+            onTap: () {
+              showTimeModal(context, (e) {
+                setState(() {
+                  _timeController.text = e;
+                });
+              });
+            },
+            child: Card(
+              elevation: 0,
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(
+                  color: Colors.blue,
                   width: 1.0,
                 ),
-                borderRadius: BorderRadius.circular(8),
               ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(
-                  color: Colors.black,
-                  width: 1.0,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.av_timer_sharp), // Prefix icon
+                          const SizedBox(
+                              width: 12), // Space between icon and text
+                          SizedBox(
+                            width: 250,
+                            child: Text(
+                              _timeController.text.isNotEmpty
+                                  ? _timeController.text
+                                  : "ជ្រើសរើសម៉ោងដឹក",
+                              style: const TextStyle(fontSize: 16),
+                              maxLines: 1, // Limits to 1 line
+                              overflow: TextOverflow
+                                  .ellipsis, // Adds "..." when truncated
+                            ),
+                          ),
+                        ],
+                      ),
+                    ]),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Card(
+            elevation: 0,
+            color: Colors.white,
+            child: TextField(
+              controller: _remarkController,
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.border_color),
+                labelText: 'បញ្ចូលចំណាំ',
+                errorText: _loactoinError, // Show error message
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                borderRadius: BorderRadius.circular(8),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: _loactoinError != null ? Colors.red : Colors.blue,
+                      width: 1.0), // Red border if error, blue otherwise
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: Colors.blue,
+                      width: 2.0), // Border color when focused
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ),
@@ -368,10 +386,29 @@ class _CartScreenState extends State<CartScreen> {
                     return showErrorDialog(context, "សូមបញ្ចូលព័ត៌មាន!");
                   }
                 : () {
-                    return showConfirmDialog(context, "បញ្ជាក់ការកម្ម៉ង់","តើអ្នកពិតជាចង់ដាក់ការកម្ម៉ង់មែនទេ?", DialogType.primary, (){
+                    return showConfirmDialog(
+                        context,
+                        "បញ្ជាក់ការកម្ម៉ង់",
+                        "តើអ្នកពិតជាចង់ដាក់ការកម្ម៉ង់មែនទេ?",
+                        DialogType.primary, () async {
+                      final CartService cartService = CartService();
+                      Map<String, dynamic> res = await cartService.makeOrder(
+                          cart: cartProvider.cart,
+                          customerId:
+                              selectedCustomerProvider.selectedCustomer?.id ??
+                                  '',
+                          deliveryDate:
+                              Help.convertDateFormat(_dateController.text),
+                          timeSlot: _timeController.text,
+                          remark: _remarkController.text);
+                      if (context.mounted) {
+                        Provider.of<CheckOutProvider>(context, listen: false)
+                            .addOrdered(orderNo: res['order_no']);
+                      }
                       cartProvider.clearCart();
-                      selectedCustomerProvider.clearSelectedCustomer();
-                      context.go(AppRoutes.home);
+                      if (context.mounted) {
+                        context.go(AppRoutes.checkIn);
+                      }
                     });
                   },
             style: ElevatedButton.styleFrom(
@@ -398,6 +435,185 @@ class _CartScreenState extends State<CartScreen> {
           const SizedBox(height: 15),
         ],
       ),
+    );
+  }
+
+  void showTimeModal(BuildContext context, void Function(String) onConfirm) {
+    showModalBottomSheet(
+      backgroundColor: Colors.white,
+      useRootNavigator: true,
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'សូមជ្រើសរើសម៉ោងដឹក',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 15.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              onConfirm('09AM - 12PM');
+                              Navigator.pop(
+                                  context); // Close modal after selection
+                            },
+                            child: Container(
+                              width: 120, // Fixed width for consistency
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.shade50,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                    color: Colors.blue.shade300, width: 1.2),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    'ពេលព្រឹក',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blueAccent,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '09AM - 12PM',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.blueGrey.shade600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8), // Gap between items
+                          GestureDetector(
+                            onTap: () {
+                              onConfirm('01PM - 04PM');
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              width: 120,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.shade50,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                    color: Colors.blue.shade300, width: 1.2),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    'ពេលថ្ងៃ',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blueAccent,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '01PM - 04PM',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.blueGrey.shade600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: () {
+                              onConfirm('05AM - 08PM');
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              width: 120,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.shade50,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                    color: Colors.blue.shade300, width: 1.2),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    'ពេលរសៀល',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blueAccent,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '05AM - 08PM',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.blueGrey.shade600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

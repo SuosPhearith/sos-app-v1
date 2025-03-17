@@ -44,22 +44,44 @@ class AuthProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      String token =
+      Map<String, dynamic> token =
           await _authService.login(username: username, password: password);
-      _storage.write(key: 'token', value: token);
-      _isLoggedIn =true;
+      await saveAuthData(token);
+      await handleCheckAuth();
     } catch (e) {
       _error = "Invalid Credential.";
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
+  Future<void> saveAuthData(Map<String, dynamic> token) async {
+    try {
+      // Store token
+      await _storage.write(key: 'token', value: token['token'] ?? '');
+
+      // Store profile data
+      final profile = token['profile'] as Map<String, dynamic>? ?? {};
+      await _storage.write(key: 'avatar', value: profile['avatar'] ?? '');
+      await _storage.write(key: 'name', value: profile['name'] ?? '');
+      await _storage.write(key: 'username', value: profile['username'] ?? '');
+      await _storage.write(key: 'email', value: profile['email'] ?? '');
+      final defaultPos = profile['default_pos'] as Map<String, dynamic>? ?? {};
+      await _storage.write(
+        key: 'posId',
+        value: defaultPos['id']?.toString() ?? '',
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   // Logout
   Future<void> handleLogout() async {
     _isLoggedIn = false;
-    _storage.delete(key: 'token');
+    await _storage.delete(key: 'token');
     notifyListeners();
   }
 

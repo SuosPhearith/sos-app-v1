@@ -11,4 +11,5 @@ class AppRoutes {
   static const String customer = '/customer';
   static const String newCustomer = '/new-customer';
   static const String checkIn = '/check-in';
+  static const String invoiceDetail = '/invoice-detail';
 }

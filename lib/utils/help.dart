@@ -60,7 +60,9 @@ class Help {
 
   static bool isValidKhmerPhoneNumber(String phoneNumber) {
     String cleanedNumber = phoneNumber.replaceAll(RegExp(r'[\s-]'), '');
-    if (!cleanedNumber.startsWith('0') || cleanedNumber.length < 9 || cleanedNumber.length > 10) {
+    if (!cleanedNumber.startsWith('0') ||
+        cleanedNumber.length < 9 ||
+        cleanedNumber.length > 10) {
       return false;
     }
     if (!RegExp(r'^\d+$').hasMatch(cleanedNumber)) {
@@ -93,5 +95,30 @@ class Help {
       '098',
     ];
     return validPrefixes.any((prefix) => cleanedNumber.startsWith(prefix));
+  }
+
+  static String getFormattedCurrentDateTime() {
+    DateTime now = DateTime.now();
+    return '${now.year}-'
+        '${now.month.toString().padLeft(2, '0')}-'
+        '${now.day.toString().padLeft(2, '0')} '
+        '${now.hour.toString().padLeft(2, '0')}:'
+        '${now.minute.toString().padLeft(2, '0')}:'
+        '${now.second.toString().padLeft(2, '0')}';
+  }
+
+  static String convertDateFormat(String inputDate) {
+    // Split the input string "17/3/2025" into day, month, year
+    List<String> parts = inputDate.split('/');
+
+    // Extract day, month, and year
+    String day =
+        parts[0].padLeft(2, '0'); // Ensure 2 digits (e.g., "7" -> "07")
+    String month =
+        parts[1].padLeft(2, '0'); // Ensure 2 digits (e.g., "3" -> "03")
+    String year = parts[2];
+
+    // Format the output as "yyyy-MM-dd"
+    return '$year-$month-$day';
   }
 }
