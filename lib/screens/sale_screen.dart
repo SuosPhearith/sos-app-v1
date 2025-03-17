@@ -43,6 +43,21 @@ class _SaleScreenState extends State<SaleScreen> {
                 style: TextStyle(color: Colors.white),
               ),
               centerTitle: true,
+              actions: [
+              GestureDetector(
+                onTap: (){
+                  invoiceProvider.getInvoices();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.sync,
+                    color: Colors.white,
+                    size: 33,
+                  ),
+                ),
+              )
+            ],
             ),
             body: Padding(
               padding: const EdgeInsets.all(8.0),
