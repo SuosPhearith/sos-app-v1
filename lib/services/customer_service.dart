@@ -52,6 +52,13 @@ class CustomerService {
   Future<Map<String, dynamic>> createNewCustomer({
     required String name,
     required String phone,
+    String phone2 = '',
+    String phone3 = '',
+    String streetNo = '',
+    String houseNo = '',
+    String addressName = '',
+    String lat = '',
+    String lng = '',
   }) async {
     try {
       final response = await DioClient.dio.post(
@@ -61,14 +68,42 @@ class CustomerService {
           "name_kh": null,
           "phone_number": phone,
           "village_code": null,
-          "phone_number_2": null,
-          "phone_number_3": null,
-          "street_no": null,
-          "house_no": null,
-          "address_name": null,
-          "lat": null,
-          "lng": null
+          "phone_number_2": phone2,
+          "phone_number_3": phone3,
+          "street_no": streetNo,
+          "house_no": houseNo,
+          "address_name": addressName,
+          "lat": lat,
+          "lng": lng
         },
+      );
+      return response.data;
+    } on DioException catch (dioError) {
+      if (dioError.response != null) {
+        printError(
+          errorMessage: ErrorType.requestError,
+          statusCode: dioError.response!.statusCode,
+        );
+        throw Exception(ErrorType.requestError);
+      } else {
+        printError(
+          errorMessage: ErrorType.networkError,
+          statusCode: null,
+        );
+        throw Exception(ErrorType.networkError);
+      }
+    } catch (e) {
+      printError(errorMessage: 'Something went wrong.', statusCode: 500);
+      throw Exception(ErrorType.unexpectedError);
+    }
+  }
+
+  Future<Map<String, dynamic>> removeCustomer({
+    required String id,
+  }) async {
+    try {
+      final response = await DioClient.dio.delete(
+        "/api/mobile/customer/$id/safe",
       );
       return response.data;
     } on DioException catch (dioError) {

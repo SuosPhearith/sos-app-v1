@@ -48,4 +48,35 @@ class InvoiceService {
       throw Exception(ErrorType.unexpectedError);
     }
   }
+
+  Future<Map<String, dynamic>> getInvoicesDetail({
+    required String orderNo,
+  }) async {
+    try {
+      final response = await DioClient.dio.get(
+          "/api/mini/sale-order/$orderNo/detail",
+          options: Options(headers: {'x-lang': 'kh'}));
+      final Map<String, dynamic> json = response.data as Map<String, dynamic>;
+      return json;
+    } on DioException catch (dioError) {
+      if (dioError.response != null) {
+        printError(
+          errorMessage: ErrorType.requestError,
+          statusCode: dioError.response!.statusCode,
+        );
+        throw Exception(ErrorType.requestError);
+      } else {
+        printError(
+          errorMessage: ErrorType.networkError,
+          statusCode: null,
+        );
+        throw Exception(ErrorType.networkError);
+      }
+    } catch (e) {
+      printError(
+          errorMessage: 'Something went wrong. ${e.toString()}',
+          statusCode: 500);
+      throw Exception(ErrorType.unexpectedError);
+    }
+  }
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:wsm_mobile_app/app_routes.dart';
@@ -97,23 +98,33 @@ class _CheckInScreenState extends State<CheckInScreen> {
                               try {
                                 final CheckOutService checkOutService =
                                     CheckOutService();
+                                final FlutterSecureStorage secureStorage =
+                                    FlutterSecureStorage();
+                                String checkInId =
+                                    await secureStorage.read(key: 'checkIn') ??
+                                        '';
+                                if (checkInId == '') {
+                                  if (context.mounted) {
+                                    return showErrorDialog(
+                                        context, 'មិនមាន Check_in_id!');
+                                  }
+                                }
                                 await checkOutService.checkOut(
                                     checkIn: CheckIn(
-                                        checkinAt: checkOutProvider
-                                                .checkIn?.checkinAt ??
-                                            '',
-                                        lat: checkOutProvider.checkIn?.lat ??
-                                            0.0,
-                                        lng: checkOutProvider.checkIn?.lng ??
-                                            0.0,
+                                        checkinAt: '',
+                                        lat: 0.0,
+                                        lng: 0.0,
                                         customerId: selectedCustomerProvider
                                                 .selectedCustomer?.id ??
-                                            ''),
-                                    ordered: checkOutProvider.ordered);
+                                            "",
+                                        addressName: ""),
+                                    ordered: checkOutProvider.ordered,
+                                    checkInId: int.parse(checkInId));
                                 selectedCustomerProvider
                                     .clearSelectedCustomer();
                                 cartProvider.clearCart();
                                 checkOutProvider.clearOrdered();
+                                await secureStorage.delete(key: 'checkIn');
                                 if (context.mounted) {
                                   context.go(AppRoutes.home);
                                 }

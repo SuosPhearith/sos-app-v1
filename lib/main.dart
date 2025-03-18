@@ -18,6 +18,7 @@ import 'package:wsm_mobile_app/screens/new_customer_screen.dart';
 import 'package:wsm_mobile_app/screens/profile_screen.dart';
 import 'package:wsm_mobile_app/screens/sale_screen.dart';
 import 'package:wsm_mobile_app/utils/dio.client.dart';
+// import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,6 +32,9 @@ void main() async {
       throw Exception('$variable is not set in .env.$flavor');
     }
   }
+
+  // final FlutterSecureStorage flutterSecureStorage = FlutterSecureStorage();
+  // await flutterSecureStorage.deleteAll();
 
   runApp(
     MultiProvider(

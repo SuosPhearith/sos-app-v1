@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:wsm_mobile_app/app_routes.dart';
 import 'package:wsm_mobile_app/providers/local/invoice_provider.dart';
 
 class SaleScreen extends StatefulWidget {
@@ -44,20 +46,20 @@ class _SaleScreenState extends State<SaleScreen> {
               ),
               centerTitle: true,
               actions: [
-              GestureDetector(
-                onTap: (){
-                  invoiceProvider.getInvoices();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Icon(
-                    Icons.sync,
-                    color: Colors.white,
-                    size: 33,
+                GestureDetector(
+                  onTap: () {
+                    invoiceProvider.getInvoices();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.sync,
+                      color: Colors.white,
+                      size: 33,
+                    ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
             ),
             body: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -142,7 +144,10 @@ class _SaleScreenState extends State<SaleScreen> {
                                           deliveryDate: invoice.deliveryDate,
                                           grandTotal: invoice.grandTotal,
                                           orderNo: invoice.orderNo,
-                                          onTap: () {},
+                                          onTap: () {
+                                            context.push(
+                                                '${AppRoutes.invoiceDetail}/${invoice.orderNo}');
+                                          },
                                         );
                                       }).toList(),
                                     ),

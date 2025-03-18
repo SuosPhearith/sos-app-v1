@@ -22,9 +22,11 @@ class CheckInHistory {
   factory CheckInHistory.fromJson(Map<String, dynamic> json) {
     return CheckInHistory(
       id: json['id'] as int,
-      customerId: json['customer_id'] as String,
+      customerId:
+          json['customer_id'] == null ? '' : json['customer_id'] as String,
       checkinAt: json['checkin_at'] as String,
-      checkoutAt: json['checkout_at'] as String,
+      checkoutAt:
+          json['checkout_at'] == null ? "" : json['checkout_at'] as String,
       userId: json['user_id'] as int,
       lat: (json['lat'] as num).toDouble(), // Handle both int and double
       lng: (json['lng'] as num).toDouble(), // Handle both int and double

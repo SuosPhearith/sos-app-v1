@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:wsm_mobile_app/error_type.dart';
 import 'package:wsm_mobile_app/models/category_model.dart';
@@ -112,5 +113,123 @@ class CheckInService {
     return await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
+  }
+
+  Future<Map<String, dynamic>?> getCurrentLatLng() async {
+    if (!await Geolocator.isLocationServiceEnabled()) {
+      return null;
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.whileInUse &&
+          permission != LocationPermission.always) {
+        return null;
+      }
+    } else if (permission == LocationPermission.deniedForever) {
+      return null;
+    }
+
+    try {
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.medium,
+        timeLimit: const Duration(seconds: 5),
+      );
+
+      // Get address from coordinates
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      String address = placemarks.isNotEmpty
+          ? '${placemarks[0].street}, ${placemarks[0].locality}, ${placemarks[0].country}'
+          : 'Unknown location';
+
+      return {
+        'lat': position.latitude,
+        'lng': position.longitude,
+        'address': address,
+      };
+    } catch (e) {
+      // Fallback to last known position if timeout occurs
+      final lastPosition = await Geolocator.getLastKnownPosition();
+      if (lastPosition != null) {
+        // Get address for last known position
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+          lastPosition.latitude,
+          lastPosition.longitude,
+        );
+
+        String address = placemarks.isNotEmpty
+            ? '${placemarks[0].street}, ${placemarks[0].locality}, ${placemarks[0].country}'
+            : 'Unknown location';
+
+        return {
+          'lat': lastPosition.latitude,
+          'lng': lastPosition.longitude,
+          'address': address,
+        };
+      }
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>> makeCheckIn(
+      {required String lat, required String lng}) async {
+    try {
+      final response = await DioClient.dio.post(
+        "/api/mobile/checkin",
+        data: {
+          "lat": lat,
+          "lng": lng,
+        },
+      );
+      return response.data;
+    } on DioException catch (dioError) {
+      if (dioError.response != null) {
+        printError(
+          errorMessage: ErrorType.requestError,
+          statusCode: dioError.response!.statusCode,
+        );
+        throw Exception(ErrorType.requestError);
+      } else {
+        printError(
+          errorMessage: ErrorType.networkError,
+          statusCode: null,
+        );
+        throw Exception(ErrorType.networkError);
+      }
+    } catch (e) {
+      printError(errorMessage: 'Something went wrong.', statusCode: 500);
+      throw Exception(ErrorType.unexpectedError);
+    }
+  }
+
+  Future<Map<String, dynamic>> cancelCheckIn({required int id}) async {
+    try {
+      final response = await DioClient.dio.delete(
+        "/api/mobile/checkin/$id",
+      );
+      return response.data;
+    } on DioException catch (dioError) {
+      if (dioError.response != null) {
+        printError(
+          errorMessage: ErrorType.requestError,
+          statusCode: dioError.response!.statusCode,
+        );
+        throw Exception(ErrorType.requestError);
+      } else {
+        printError(
+          errorMessage: ErrorType.networkError,
+          statusCode: null,
+        );
+        throw Exception(ErrorType.networkError);
+      }
+    } catch (e) {
+      printError(errorMessage: 'Something went wrong.', statusCode: 500);
+      throw Exception(ErrorType.unexpectedError);
+    }
   }
 }

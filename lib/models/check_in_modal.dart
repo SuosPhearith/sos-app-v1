@@ -3,12 +3,14 @@ class CheckIn {
   final double lat; // Latitude as double
   final double lng; // Longitude as double
   final String customerId; // Customer ID as String
+  final String addressName;
 
   CheckIn({
     required this.checkinAt,
     required this.lat,
     required this.lng,
     required this.customerId,
+    required this.addressName,
   });
 
   // Factory constructor to create a CheckIn from JSON
@@ -18,6 +20,7 @@ class CheckIn {
       lat: double.parse(json['lat'] as String),
       lng: double.parse(json['lng'] as String),
       customerId: json['customer_id'] as String,
+      addressName: json['address_name'] as String,
     );
   }
 
@@ -28,6 +31,7 @@ class CheckIn {
       'lat': lat.toString(),
       'lng': lng.toString(),
       'customer_id': customerId,
+      'address_name': addressName,
     };
   }
 

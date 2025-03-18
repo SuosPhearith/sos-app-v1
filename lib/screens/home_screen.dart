@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:wsm_mobile_app/app_routes.dart';
 import 'package:wsm_mobile_app/models/check_in_modal.dart';
@@ -8,6 +7,7 @@ import 'package:wsm_mobile_app/providers/global/check_out_provider.dart';
 import 'package:wsm_mobile_app/providers/local/home_provider.dart';
 import 'package:wsm_mobile_app/services/check_in_service.dart';
 import 'package:wsm_mobile_app/utils/help.dart';
+import 'package:wsm_mobile_app/utils/type.dart';
 import 'package:wsm_mobile_app/widgets/helper.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
             centerTitle: true,
             actions: [
               GestureDetector(
-                onTap: (){
+                onTap: () {
                   homeProvider.getCheckInHistory();
                 },
                 child: Padding(
@@ -62,96 +62,127 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.all(12.0),
                 child: homeProvider.isLoading
                     ? const Center(child: CircularProgressIndicator())
-                    : ListView(
-                        children: [
-                          ...homeProvider.checkInRes!.data.map((item) {
-                            return GestureDetector(
-                              onTap: () {
-                                // context.push(AppRoutes.checkIn);
-                              },
-                              child: Card(
-                                color: Colors.white,
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                margin: const EdgeInsets.only(bottom: 8),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                          color: Colors.blue[50],
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                        child: const Icon(
-                                          Icons.location_on,
-                                          color: Colors.blue,
-                                          size: 28,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              item.customerId,
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black87,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
+                    : homeProvider.checkInRes == null
+                        ? Text('No Data')
+                        : ListView(
+                            children: [
+                              ...homeProvider.checkInRes!.data.map((item) {
+                                return GestureDetector(
+                                  onTap: () async {
+                                    if (homeProvider.isPendingCheckIn &&
+                                        item.checkoutAt == '') {
+                                      await homeProvider.setCheckInId(
+                                          checkInId: item.id.toString());
+                                      if (context.mounted) {
+                                        context.push(AppRoutes.checkIn);
+                                      }
+                                    }
+                                  },
+                                  onLongPress: () {
+                                    showConfirmDialog(
+                                        context,
+                                        'បញ្ចាក់ការលុប',
+                                        "តើអ្នកពិតជាចង់លុប Check In មែនទេ?",
+                                        DialogType.danger, () async {
+                                      final CheckInService checkInService =
+                                          CheckInService();
+                                      await checkInService.cancelCheckIn(
+                                          id: item.id);
+                                      await homeProvider.setCheckInId(
+                                          checkInId: '');
+                                      await homeProvider.getCheckInHistory();
+                                    });
+                                  },
+                                  child: Card(
+                                    color: item.checkoutAt == ''
+                                        ? Colors.blue[100]
+                                        : Colors.white,
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    margin: const EdgeInsets.only(bottom: 8),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.all(8),
+                                            decoration: BoxDecoration(
+                                              color: Colors.blue[50],
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                             ),
-                                            const SizedBox(height: 8),
-                                            Row(
+                                            child: const Icon(
+                                              Icons.location_on,
+                                              color: Colors.blue,
+                                              size: 28,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                const Icon(
-                                                  Icons.map,
-                                                  size: 16,
-                                                  color: Colors.grey,
-                                                ),
-                                                const SizedBox(width: 4),
                                                 Text(
-                                                  'Lat: ${item.lat}  |  Lng: ${item.lng}',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.grey,
+                                                  item.customerId == ''
+                                                      ? 'រងចាំការ Check Out'
+                                                      : item.customerId,
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: item.checkoutAt == ''
+                                                        ? Colors.blue[700]
+                                                        : Colors.black87,
                                                   ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                                const SizedBox(height: 8),
+                                                Row(
+                                                  children: [
+                                                    const Icon(
+                                                      Icons.map,
+                                                      size: 16,
+                                                      color: Colors.grey,
+                                                    ),
+                                                    const SizedBox(width: 4),
+                                                    Text(
+                                                      'Lat: ${item.lat}  |  Lng: ${item.lng}',
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 6),
+                                                _buildDateRow(
+                                                  'Check-in',
+                                                  item.checkinAt,
+                                                  Colors.blue[700]!,
+                                                ),
+                                                const SizedBox(height: 6),
+                                                _buildDateRow(
+                                                  'Check-out',
+                                                  item.checkoutAt,
+                                                  Colors.red[700]!,
                                                 ),
                                               ],
                                             ),
-                                            const SizedBox(height: 6),
-                                            _buildDateRow(
-                                              'Check-in',
-                                              item.checkinAt,
-                                              Colors.blue[700]!,
-                                            ),
-                                            const SizedBox(height: 6),
-                                            _buildDateRow(
-                                              'Check-out',
-                                              item.checkoutAt,
-                                              Colors.red[700]!,
-                                            ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              ),
-                            );
-                          }),
-                        ],
-                      ),
+                                );
+                              }),
+                            ],
+                          ),
               ),
               // Show loading indicator when _isLoading is true
               if (_isLoading)
@@ -164,13 +195,16 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () async {
+              if (homeProvider.isPendingCheckIn) {
+                return showErrorDialog(context, "សូម Check Out សិន");
+              }
               setState(() {
                 _isLoading = true; // Start loading
               });
 
               final CheckInService checkInService = CheckInService();
-              Position? position = await checkInService.getCurrentLocation();
-
+              Map<String, dynamic>? position =
+                  await checkInService.getCurrentLatLng();
               setState(() {
                 _isLoading = false; // Stop loading
               });
@@ -179,12 +213,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 checkOutProvider.setCheckIn(
                     check: CheckIn(
                         checkinAt: Help.getFormattedCurrentDateTime(),
-                        lat: position.latitude,
-                        lng: position.longitude,
-                        customerId: ''));
-                if (context.mounted) {
-                  context.push(AppRoutes.checkIn);
-                }
+                        lat: position['lat'] ?? 0.0,
+                        lng: position['lng'] ?? 0.0,
+                        customerId: '',
+                        addressName: position['address'] ?? "Unknown"));
+                Map<String, dynamic> res = await checkInService.makeCheckIn(
+                    lat: position['lat'].toString(),
+                    lng: position['lng'].toString());
+                await homeProvider.setCheckInId(
+                    checkInId: res['id'].toString());
+                await homeProvider.getCheckInHistory();
               } else {
                 if (context.mounted) {
                   showErrorDialog(context, "មិនអាចទាញយកទីតាំង");

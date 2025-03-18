@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:wsm_mobile_app/app_routes.dart';
 import 'package:wsm_mobile_app/error_type.dart';
 import 'package:wsm_mobile_app/models/customer_model.dart';
+import 'package:wsm_mobile_app/providers/global/check_out_provider.dart';
 import 'package:wsm_mobile_app/providers/global/selected_customer_provider.dart';
 import 'package:wsm_mobile_app/services/customer_service.dart';
 import 'package:wsm_mobile_app/utils/help.dart';
@@ -409,7 +410,7 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                             child: Text.rich(
                               TextSpan(
                                 children: [
-                                  TextSpan(text: 'ផ្ទះលេខ'),
+                                  TextSpan(text: 'លេខផ្ទះ'),
                                 ],
                               ),
                             ),
@@ -424,7 +425,7 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                           child: TextField(
                             controller: _houseNumberController,
                             decoration: InputDecoration(
-                              hintText: 'ផ្ទះលេខ',
+                              hintText: 'លេខផ្ទះ',
                               prefixIcon: const Icon(Icons.home,
                                   color: Colors.black, size: 24),
                               border: OutlineInputBorder(
@@ -480,120 +481,135 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                           ),
                         ),
                       ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8),
-                            child: Text.rich(
-                              TextSpan(
-                                children: [
-                                  TextSpan(text: 'ឈ្មោះផ្លូវ'),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(bottom: 8, right: 8, left: 8),
-                        child: SizedBox(
-                          height: 50,
-                          child: TextField(
-                            controller: _streetNameController,
-                            decoration: InputDecoration(
-                              hintText: 'ឈ្មោះផ្លូវ',
-                              prefixIcon: const Icon(Icons.streetview,
-                                  color: Colors.black, size: 24),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(
-                                    color: Colors.blue, width: 1),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 10),
-                              filled: true,
-                              fillColor: Colors.white,
-                            ),
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      ),
+                      // Row(
+                      //   children: [
+                      //     Padding(
+                      //       padding: const EdgeInsets.only(left: 8),
+                      //       child: Text.rich(
+                      //         TextSpan(
+                      //           children: [
+                      //             TextSpan(text: 'ឈ្មោះផ្លូវ'),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
+                      // Padding(
+                      //   padding:
+                      //       const EdgeInsets.only(bottom: 8, right: 8, left: 8),
+                      //   child: SizedBox(
+                      //     height: 50,
+                      //     child: TextField(
+                      //       controller: _streetNameController,
+                      //       decoration: InputDecoration(
+                      //         hintText: 'ឈ្មោះផ្លូវ',
+                      //         prefixIcon: const Icon(Icons.streetview,
+                      //             color: Colors.black, size: 24),
+                      //         border: OutlineInputBorder(
+                      //           borderRadius: BorderRadius.circular(8),
+                      //           borderSide: const BorderSide(
+                      //               color: Colors.blue, width: 1),
+                      //         ),
+                      //         contentPadding: const EdgeInsets.symmetric(
+                      //             vertical: 8, horizontal: 10),
+                      //         filled: true,
+                      //         fillColor: Colors.white,
+                      //       ),
+                      //       style: const TextStyle(fontSize: 16),
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
               ),
               // Create Button
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (_customerNameController.text.isEmpty ||
-                          _phoneController.text.isEmpty ) {
-                        return showErrorDialog(
-                            context, "ព័ត៌មានមិនគ្រប់គ្រាន់");
-                      }
-                      // Is valid phone number
-                      if (!Help.isValidKhmerPhoneNumber(
-                          _phoneController.text)) {
-                        return showErrorDialog(
-                            context, "លេខទូរស័ព្ទមិនត្រឹមត្រូវ");
-                      }
-                      try {
-                        final cusotmerService = CustomerService();
-                        final Map<String, dynamic> res =
-                            await cusotmerService.createNewCustomer(
-                                name: _customerNameController.text,
-                                phone: _phoneController.text);
-                        if (context.mounted) {
-                          Provider.of<SelectedCustomerProvider>(context,
-                                  listen: false)
-                              .setSelectedCustomer(Customer(
-                                  id: res['id'] as String,
-                                  phoneNumber: res['phone_number'] as String,
-                                  name: res['name'] as String,
-                                  wholesaleId: res['wholesale_id'] as String,
-                                  createdAt: DateTime.parse(
-                                      res['created_at'] as String),
-                                  updatedAt: DateTime.parse(
-                                      res['updated_at'] as String)));
-                          context.go(AppRoutes.checkIn);
+              Consumer<CheckOutProvider>(
+                  builder: (context, checkOutProvider, child) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (_customerNameController.text.isEmpty ||
+                            _phoneController.text.isEmpty) {
+                          return showErrorDialog(
+                              context, "ព័ត៌មានមិនគ្រប់គ្រាន់");
                         }
-                      } catch (e) {
-                        if (context.mounted) {
-                          showErrorDialog(context, "អតិថិជនមានរួចហើយ");
+                        // Is valid phone number
+                        if (!Help.isValidKhmerPhoneNumber(
+                            _phoneController.text)) {
+                          return showErrorDialog(
+                              context, "លេខទូរស័ព្ទមិនត្រឹមត្រូវ");
                         }
-                        printError(errorMessage: ErrorType.somethingWentWrong);
-                      }
+                        try {
+                          final cusotmerService = CustomerService();
+                          final Map<String, dynamic> res =
+                              await cusotmerService.createNewCustomer(
+                                  name: _customerNameController.text,
+                                  phone: _phoneController.text,
+                                  phone2: _secondPhoneController.text,
+                                  phone3: _thirdPhoneController.text,
+                                  streetNo: _streetNumberController.text,
+                                  houseNo: _houseNumberController.text,
+                                  addressName:
+                                      checkOutProvider.checkIn?.addressName ??
+                                          "Unknown",
+                                  lat: (checkOutProvider.checkIn?.lat ?? 0.0)
+                                      .toString(),
+                                  lng: (checkOutProvider.checkIn?.lng ?? 0.0)
+                                      .toString());
+                          if (context.mounted) {
+                            Provider.of<SelectedCustomerProvider>(context,
+                                    listen: false)
+                                .setSelectedCustomer(Customer(
+                                    id: res['id'] as String,
+                                    phoneNumber: res['phone_number'] as String,
+                                    name: res['name'] as String,
+                                    wholesaleId: res['wholesale_id'] as String,
+                                    createdAt: DateTime.parse(
+                                        res['created_at'] as String),
+                                    updatedAt: DateTime.parse(
+                                        res['updated_at'] as String)));
+                            context.go(AppRoutes.checkIn);
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            showErrorDialog(context, "អតិថិជនមានរួចហើយ");
+                          }
+                          printError(
+                              errorMessage: ErrorType.somethingWentWrong);
+                        }
 
-                      // print('Customer Name: ${_customerNameController.text}');
-                      // print('Phone: ${_phoneController.text}');
-                      // print('Outlet Type: $_selectedOutletType');
-                      // print('Second Phone: ${_secondPhoneController.text}');
-                      // print('Third Phone: ${_thirdPhoneController.text}');
-                      // print('House Number: ${_houseNumberController.text}');
-                      // print('Street Number: ${_streetNumberController.text}');
-                      // print('Street Name: ${_streetNameController.text}');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        // print('Customer Name: ${_customerNameController.text}');
+                        // print('Phone: ${_phoneController.text}');
+                        // print('Outlet Type: $_selectedOutletType');
+                        // print('Second Phone: ${_secondPhoneController.text}');
+                        // print('Third Phone: ${_thirdPhoneController.text}');
+                        // print('House Number: ${_houseNumberController.text}');
+                        // print('Street Number: ${_streetNumberController.text}');
+                        // print('Street Name: ${_streetNameController.text}');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      'បង្កើត',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
+                      child: Text(
+                        'បង្កើត',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
+                );
+              })
             ],
           ),
         ),

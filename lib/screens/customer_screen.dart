@@ -6,6 +6,9 @@ import 'package:provider/provider.dart';
 import 'package:wsm_mobile_app/app_routes.dart';
 import 'package:wsm_mobile_app/providers/global/selected_customer_provider.dart';
 import 'package:wsm_mobile_app/providers/local/customer_provider.dart';
+import 'package:wsm_mobile_app/services/customer_service.dart';
+import 'package:wsm_mobile_app/utils/type.dart';
+import 'package:wsm_mobile_app/widgets/helper.dart';
 
 class CustomerScreen extends StatefulWidget {
   const CustomerScreen({super.key});
@@ -128,6 +131,22 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                                 .setSelectedCustomer(customer);
                                             context.go(AppRoutes.checkIn);
                                           },
+                                          onLongPress: () {
+                                            showConfirmDialog(
+                                                context,
+                                                "បញ្ជាក់ការលុប",
+                                                "តើអ្នកពិចជាចង់លុបមែនទេ?",
+                                                DialogType.danger, () async {
+                                              final CustomerService
+                                                  customerService =
+                                                  CustomerService();
+                                              await customerService
+                                                  .removeCustomer(
+                                                      id: customer.id);
+                                              selectedCustomerProvider.clearSelectedCustomer();
+                                              await customerProvider.getCustomers(); // error here
+                                            });
+                                          },
                                         );
                                       }).toList(),
                                     ),
@@ -156,18 +175,21 @@ class CustomerActionItem extends StatelessWidget {
   final String name;
   final String phone;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
 
   const CustomerActionItem({
     super.key,
     required this.name,
     required this.phone,
     this.onTap,
+    this.onLongPress,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
+      onLongPress: onLongPress,
       child: Container(
         padding: const EdgeInsets.all(12),
         margin: const EdgeInsets.only(top: 4, bottom: 4),

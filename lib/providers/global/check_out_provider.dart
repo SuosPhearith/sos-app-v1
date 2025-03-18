@@ -6,6 +6,7 @@ class CheckOutProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _error;
   CheckIn? _checkIn;
+  int? _checkInId;
   final List<String> _ordered = [];
 
   // Services
@@ -15,10 +16,21 @@ class CheckOutProvider extends ChangeNotifier {
   String? get error => _error;
   CheckIn? get checkIn => _checkIn;
   List<String> get ordered => _ordered;
+  int? get checkInId => _checkInId;
 
   // Setters
   void setCheckIn({required CheckIn check}) {
     _checkIn = check;
+    notifyListeners();
+  }
+
+  void setCheckInId({required int id}) {
+    _checkInId = id;
+    notifyListeners();
+  }
+
+  void clearCheckInId() {
+    _checkIn = null;
     notifyListeners();
   }
 
