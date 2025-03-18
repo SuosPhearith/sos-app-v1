@@ -9,6 +9,7 @@ import 'package:wsm_mobile_app/providers/global/cart_provider.dart';
 import 'package:wsm_mobile_app/providers/global/check_out_provider.dart';
 import 'package:wsm_mobile_app/providers/global/selected_customer_provider.dart';
 import 'package:wsm_mobile_app/screens/cart_screen.dart';
+import 'package:wsm_mobile_app/screens/check_in_detail_screen.dart';
 import 'package:wsm_mobile_app/screens/check_in_screen.dart';
 import 'package:wsm_mobile_app/screens/customer_screen.dart';
 import 'package:wsm_mobile_app/screens/home_screen.dart';
@@ -125,6 +126,17 @@ final GoRouter _router = GoRouter(
         return AuthMiddleware(
           child: AuthLayout(
             child: InvoiceDetailScreen(invoiceId: invoiceId), // Pass to screen
+          ),
+        );
+      },
+    ),
+    GoRoute(
+      path: '${AppRoutes.checkInDetail}/:id', // Dynamic ":id" parameter
+      builder: (context, state) {
+        final String invoiceId = state.pathParameters['id'] ?? ''; // Get the ID
+        return AuthMiddleware(
+          child: AuthLayout(
+            child: CheckInDetailScreen(invoiceId: invoiceId), // Pass to screen
           ),
         );
       },

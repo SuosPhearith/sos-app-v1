@@ -39,6 +39,11 @@ class CheckOutProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeOrdered({required String order}){
+    _ordered.remove(order);
+    notifyListeners();
+  }
+
   void clearOrdered() {
     ordered.clear();
     notifyListeners();

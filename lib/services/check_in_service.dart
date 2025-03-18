@@ -232,4 +232,56 @@ class CheckInService {
       throw Exception(ErrorType.unexpectedError);
     }
   }
+
+  Future<Map<String, dynamic>> getCheckInDetail({required String id}) async {
+    try {
+      final response = await DioClient.dio.get(
+        "/api/mobile/visit/$id",
+      );
+      return response.data;
+    } on DioException catch (dioError) {
+      if (dioError.response != null) {
+        printError(
+          errorMessage: ErrorType.requestError,
+          statusCode: dioError.response!.statusCode,
+        );
+        throw Exception(ErrorType.requestError);
+      } else {
+        printError(
+          errorMessage: ErrorType.networkError,
+          statusCode: null,
+        );
+        throw Exception(ErrorType.networkError);
+      }
+    } catch (e) {
+      printError(errorMessage: 'Something went wrong.', statusCode: 500);
+      throw Exception(ErrorType.unexpectedError);
+    }
+  }
+
+  Future<Map<String, dynamic>> voidOrder({required String id}) async {
+    try {
+      final response = await DioClient.dio.post(
+        "/api/mobile/order/$id/void",
+      );
+      return response.data;
+    } on DioException catch (dioError) {
+      if (dioError.response != null) {
+        printError(
+          errorMessage: ErrorType.requestError,
+          statusCode: dioError.response!.statusCode,
+        );
+        throw Exception(ErrorType.requestError);
+      } else {
+        printError(
+          errorMessage: ErrorType.networkError,
+          statusCode: null,
+        );
+        throw Exception(ErrorType.networkError);
+      }
+    } catch (e) {
+      printError(errorMessage: 'Something went wrong.', statusCode: 500);
+      throw Exception(ErrorType.unexpectedError);
+    }
+  }
 }

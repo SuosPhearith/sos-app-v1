@@ -76,9 +76,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                       if (context.mounted) {
                                         context.push(AppRoutes.checkIn);
                                       }
+                                    } else {
+                                      if (context.mounted) {
+                                        context.push(
+                                            '${AppRoutes.checkInDetail}/${item.id}');
+                                      }
                                     }
                                   },
                                   onLongPress: () {
+                                    if (item.checkoutAt != '') {
+                                      return showErrorDialog(
+                                          context, 'មិនអាចលុបបានទេ!');
+                                    }
                                     showConfirmDialog(
                                         context,
                                         'បញ្ចាក់ការលុប',
@@ -130,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 Text(
                                                   item.customerId == ''
                                                       ? 'រងចាំការ Check Out'
-                                                      : item.customerId,
+                                                      : item.customerName,
                                                   style: TextStyle(
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold,

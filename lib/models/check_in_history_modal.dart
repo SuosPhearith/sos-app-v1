@@ -1,6 +1,7 @@
 class CheckInHistory {
   int id;
   String customerId;
+  String customerName;
   String checkinAt;
   String checkoutAt;
   int userId;
@@ -11,6 +12,7 @@ class CheckInHistory {
   CheckInHistory({
     required this.id,
     required this.customerId,
+    required this.customerName,
     required this.checkinAt,
     required this.checkoutAt,
     required this.userId,
@@ -24,6 +26,8 @@ class CheckInHistory {
       id: json['id'] as int,
       customerId:
           json['customer_id'] == null ? '' : json['customer_id'] as String,
+      customerName:
+          json['customer'] == null ? '' : json['customer']['name'] as String,
       checkinAt: json['checkin_at'] as String,
       checkoutAt:
           json['checkout_at'] == null ? "" : json['checkout_at'] as String,
@@ -38,6 +42,7 @@ class CheckInHistory {
     return {
       'id': id,
       'customer_id': customerId,
+      'customerName': customerName,
       'checkin_at': checkinAt,
       'checkout_at': checkoutAt,
       'user_id': userId,

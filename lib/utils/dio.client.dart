@@ -20,9 +20,13 @@ class DioClient {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          // ✅ Inject token into requests
-          String? token = await _storage.read(key: 'token');
-          if (token != null) {
+          String token = '';
+          try {
+            token = await _storage.read(key: 'token') ?? '';
+          } catch (e) {
+            print('Failed to read token: $e');
+          }
+          if (token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
           }
 

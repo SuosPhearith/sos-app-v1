@@ -15,6 +15,7 @@ import 'package:wsm_mobile_app/providers/global/cart_provider.dart';
 import 'package:wsm_mobile_app/providers/global/check_out_provider.dart';
 import 'package:wsm_mobile_app/providers/global/selected_customer_provider.dart';
 import 'package:wsm_mobile_app/providers/local/check_in_provider.dart';
+import 'package:wsm_mobile_app/services/check_in_service.dart';
 import 'package:wsm_mobile_app/services/check_out_service.dart';
 import 'package:wsm_mobile_app/utils/type.dart';
 import 'package:wsm_mobile_app/widgets/helper.dart';
@@ -277,6 +278,61 @@ class _CheckInScreenState extends State<CheckInScreen> {
                       ],
                     ),
                   ),
+                  ...checkOutProvider.ordered.map((order) {
+                    return Card(
+                      elevation: 0,
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: const BorderSide(color: Colors.blue, width: 1.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                context
+                                    .push('${AppRoutes.invoiceDetail}/$order');
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(Icons.receipt),
+                                  SizedBox(width: 12),
+                                  SizedBox(
+                                    width: 250,
+                                    child: Text(
+                                      order,
+                                      style: TextStyle(fontSize: 16),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            GestureDetector(
+                                onTap: () {
+                                  showConfirmDialog(
+                                      context,
+                                      "បញ្ចាក់ការលុប",
+                                      "តើអ្នកពិតជាចង់លុបមែនទេ",
+                                      DialogType.danger, () async {
+                                    final CheckInService checkInService =
+                                        CheckInService();
+                                    await checkInService.voidOrder(id: order);
+                                    checkOutProvider.removeOrdered(
+                                        order: order);
+                                  });
+                                },
+                                child: const Icon(Icons.delete,
+                                    color: Colors.red)),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
                   Consumer<CheckInProvider>(
                       builder: (context, provider, child) {
                     return Padding(
