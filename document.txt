@@ -5,6 +5,7 @@
 
 # build android
 > flutter build apk --flavor dev -t lib/main.dart --dart-define=FLAVOR=dev
+>flutter build apk --flavor prod -t lib/main.dart --dart-define=FLAVOR=prod
 # build ios
 > flutter build ios --flavor dev -t lib/main.dart --dart-define=FLAVOR=dev
 
