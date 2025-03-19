@@ -9,7 +9,6 @@ class CheckOutService {
       {required CheckIn checkIn,
       required int checkInId,
       required List<String> ordered}) async {
-    print('called me');
     List<Map<String, dynamic>> items = ordered.map((item) {
       return {
         'type': 'Order',

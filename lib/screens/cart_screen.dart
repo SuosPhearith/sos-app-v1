@@ -27,60 +27,63 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[200],
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text('Cart'),
-        centerTitle: true,
-        actions: [
-          GestureDetector(
-            onTap: () {
-              showConfirmDialog(context, "បញ្ចាក់ការលុប",
-                  "តើអ្នកពិតជាចង់លុបមែនទេ?", DialogType.danger, () {
-                return Provider.of<CartProvider>(context, listen: false)
-                    .clearCart();
-              });
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(
-                Icons.delete,
-                color: Colors.red,
-              ),
-            ),
-          )
-        ],
-      ),
-      body: Consumer2<CartProvider, SelectedCustomerProvider>(
-        builder: (context, cartProvider, selectedCustomerProvider, child) {
-          if (cartProvider.cart.isEmpty) {
-            return const Center(
-              child: Text(
-                'Your cart is empty.',
-                style: TextStyle(fontSize: 18, color: Colors.grey),
-              ),
-            );
-          }
-          return Column(
-            children: [
-              // Cart Items List
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(8.0),
-                  itemCount: cartProvider.cart.length,
-                  itemBuilder: (context, index) {
-                    final cartItem = cartProvider.cart[index];
-                    return _buildCartItem(context, cartItem, cartProvider);
-                  },
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: Colors.grey[200],
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: const Text('Cart'),
+          centerTitle: true,
+          actions: [
+            GestureDetector(
+              onTap: () {
+                showConfirmDialog(context, "បញ្ចាក់ការលុប",
+                    "តើអ្នកពិតជាចង់លុបមែនទេ?", DialogType.danger, () {
+                  return Provider.of<CartProvider>(context, listen: false)
+                      .clearCart();
+                });
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.delete,
+                  color: Colors.red,
                 ),
               ),
-              // Bottom Section: Total Amount and Submit Button
-              _buildBottomSection(
-                  context, cartProvider, selectedCustomerProvider),
-            ],
-          );
-        },
+            )
+          ],
+        ),
+        body: Consumer2<CartProvider, SelectedCustomerProvider>(
+          builder: (context, cartProvider, selectedCustomerProvider, child) {
+            if (cartProvider.cart.isEmpty) {
+              return const Center(
+                child: Text(
+                  'Your cart is empty.',
+                  style: TextStyle(fontSize: 18, color: Colors.grey),
+                ),
+              );
+            }
+            return Column(
+              children: [
+                // Cart Items List
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(8.0),
+                    itemCount: cartProvider.cart.length,
+                    itemBuilder: (context, index) {
+                      final cartItem = cartProvider.cart[index];
+                      return _buildCartItem(context, cartItem, cartProvider);
+                    },
+                  ),
+                ),
+                // Bottom Section: Total Amount and Submit Button
+                _buildBottomSection(
+                    context, cartProvider, selectedCustomerProvider),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -481,8 +484,9 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 15.0),
-                      child: Row(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           GestureDetector(
                             onTap: () {
@@ -524,7 +528,7 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 8), // Gap between items
+                          const SizedBox(height: 8), // Gap between items
                           GestureDetector(
                             onTap: () {
                               onConfirm('01PM - 04PM');
@@ -564,7 +568,7 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(height: 8),
                           GestureDetector(
                             onTap: () {
                               onConfirm('05AM - 08PM');

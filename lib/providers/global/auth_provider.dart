@@ -82,6 +82,7 @@ class AuthProvider extends ChangeNotifier {
   Future<void> handleLogout() async {
     _isLoggedIn = false;
     await _storage.delete(key: 'token');
+    await _storage.delete(key: 'checkIn');
     notifyListeners();
   }
 

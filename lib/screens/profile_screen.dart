@@ -116,6 +116,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             "តើអ្នកពិតជាប្រាកដចង់ចាកចេញមែនឬទេ?",
                             DialogType.primary, () async {
                           await authProvider.handleLogout();
+                          final FlutterSecureStorage storage =
+                              FlutterSecureStorage();
+                          await storage.delete(key: 'checkIn');
                         });
                       },
                     ),

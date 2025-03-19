@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wsm_mobile_app/app_routes.dart';
-import 'package:wsm_mobile_app/services/check_in_service.dart'; // Your service
+import 'package:wsm_mobile_app/services/check_in_service.dart';
 
 class CheckInDetailScreen extends StatefulWidget {
   final String invoiceId;
@@ -42,7 +42,7 @@ class _CheckInDetailScreenState extends State<CheckInDetailScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        title: Text('Detail'),
+        title: Text('ព័ត៌មានលម្អិត'),
         backgroundColor: Colors.white,
         elevation: 2,
       ),
@@ -56,7 +56,20 @@ class _CheckInDetailScreenState extends State<CheckInDetailScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildSectionTitle('ព័ត៌មានការ Check In'),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              Icon(Icons.info_rounded),
+                              SizedBox(width: 10),
+                              Text(
+                                'ព័ត៌មានការ Check In',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
                         _buildInfoCard([
                           _buildInfoRow('Check-In',
                               checkInDetail?['checkin_at'] ?? 'N/A'),
@@ -69,8 +82,20 @@ class _CheckInDetailScreenState extends State<CheckInDetailScreen> {
                           _buildInfoRow('Longitude',
                               checkInDetail?['lng']?.toString() ?? 'N/A'),
                         ]),
-                        const SizedBox(height: 16),
-                        _buildSectionTitle('ព័ត៌មានអតិថិជន'),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              Icon(Icons.account_circle_rounded),
+                              SizedBox(width: 10),
+                              Text(
+                                'ព័ត៌មានអតិថិជន',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
                         _buildInfoCard([
                           _buildInfoRow('Name',
                               checkInDetail?['customer']?['name'] ?? 'N/A'),
@@ -83,28 +108,60 @@ class _CheckInDetailScreenState extends State<CheckInDetailScreen> {
                               checkInDetail?['customer']?['address_name'] ??
                                   'Not provided'),
                         ]),
-                        const SizedBox(height: 16),
-                        _buildSectionTitle('ព័ត៌មានបញ្ជាទិញ'),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              Icon(Icons.shopping_cart),
+                              SizedBox(width: 10),
+                              Text(
+                                'ព័ត៌មានបញ្ជាទិញ',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
                         ...(checkInDetail?['visit_plant_actions']
                                 as List<dynamic>?)!
                             .map((item) {
                           return GestureDetector(
-                            onTap: (){
-                              context.push('${AppRoutes.invoiceDetail}/${item['action']?['order_no']}');
+                            onTap: () {
+                              context.push(
+                                  '${AppRoutes.invoiceDetail}/${item['action']?['order_no']}');
                             },
                             child: Card(
                               elevation: 0,
-                              color: Colors.blue[100],
+                              color: Colors.white,
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
+                                borderRadius: BorderRadius.circular(12),
+                                side: const BorderSide(
+                                    color: Colors.blue, width: 1.0),
+                              ),
                               child: Padding(
-                                padding: const EdgeInsets.all(12.0),
+                                padding: const EdgeInsets.all(16.0),
                                 child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text("Order No: "),
-                                    Text(
-                                        '${item['action']?['order_no'] ?? 'N/A'}')
+                                    Row(
+                                      children: [
+                                        Icon(Icons.receipt),
+                                        SizedBox(width: 12),
+                                        SizedBox(
+                                          width: 250,
+                                          child: Text(
+                                            item['action']?['order_no'] ??
+                                                'N/A',
+                                            style: TextStyle(fontSize: 16),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const Icon(Icons.remove_red_eye,
+                                        color: Colors.blue),
                                   ],
                                 ),
                               ),
@@ -115,20 +172,6 @@ class _CheckInDetailScreenState extends State<CheckInDetailScreen> {
                     ),
                   ),
                 ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-        ),
-      ),
     );
   }
 

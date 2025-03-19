@@ -69,8 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ...homeProvider.checkInRes!.data.map((item) {
                                 return GestureDetector(
                                   onTap: () async {
-                                    if (homeProvider.isPendingCheckIn &&
-                                        item.checkoutAt == '') {
+                                    if (item.checkoutAt == '') {
                                       await homeProvider.setCheckInId(
                                           checkInId: item.id.toString());
                                       if (context.mounted) {
@@ -204,8 +203,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () async {
-              if (homeProvider.isPendingCheckIn) {
-                return showErrorDialog(context, "សូម Check Out សិន");
+              bool canCheckIn = await homeProvider.canCheckIn();
+              if (!canCheckIn) {
+                if (context.mounted) {
+                  return showErrorDialog(context, "សូម Check Out សិន");
+                }
               }
               setState(() {
                 _isLoading = true; // Start loading
@@ -218,23 +220,29 @@ class _HomeScreenState extends State<HomeScreen> {
                 _isLoading = false; // Stop loading
               });
 
-              if (position != null) {
-                checkOutProvider.setCheckIn(
-                    check: CheckIn(
-                        checkinAt: Help.getFormattedCurrentDateTime(),
-                        lat: position['lat'] ?? 0.0,
-                        lng: position['lng'] ?? 0.0,
-                        customerId: '',
-                        addressName: position['address'] ?? "Unknown"));
-                Map<String, dynamic> res = await checkInService.makeCheckIn(
-                    lat: position['lat'].toString(),
-                    lng: position['lng'].toString());
-                await homeProvider.setCheckInId(
-                    checkInId: res['id'].toString());
-                await homeProvider.getCheckInHistory();
-              } else {
+              try {
+                if (position != null) {
+                  checkOutProvider.setCheckIn(
+                      check: CheckIn(
+                          checkinAt: Help.getFormattedCurrentDateTime(),
+                          lat: position['lat'] ?? 0.0,
+                          lng: position['lng'] ?? 0.0,
+                          customerId: '',
+                          addressName: position['address'] ?? "Unknown"));
+                  Map<String, dynamic> res = await checkInService.makeCheckIn(
+                      lat: position['lat'].toString(),
+                      lng: position['lng'].toString());
+                  await homeProvider.setCheckInId(
+                      checkInId: res['id'].toString());
+                  await homeProvider.getCheckInHistory();
+                } else {
+                  if (context.mounted) {
+                    showErrorDialog(context, "មិនអាចទាញយកទីតាំង");
+                  }
+                }
+              } catch (e) {
                 if (context.mounted) {
-                  showErrorDialog(context, "មិនអាចទាញយកទីតាំង");
+                  showErrorDialog(context, "មិនអាចបង្កើតបានទេ");
                 }
               }
             },
