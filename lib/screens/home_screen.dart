@@ -116,20 +116,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Container(
-                                            padding: const EdgeInsets.all(8),
-                                            decoration: BoxDecoration(
-                                              color: Colors.blue[50],
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
-                                            child: const Icon(
-                                              Icons.location_on,
-                                              color: Colors.blue,
-                                              size: 28,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 12),
+                                          // Container(
+                                          //   padding: const EdgeInsets.all(8),
+                                          //   decoration: BoxDecoration(
+                                          //     color: Colors.blue[50],
+                                          //     borderRadius:
+                                          //         BorderRadius.circular(12),
+                                          //   ),
+                                          //   child: const Icon(
+                                          //     Icons.location_on,
+                                          //     color: Colors.blue,
+                                          //     size: 28,
+                                          //   ),
+                                          // ),
+                                          // const SizedBox(width: 12),
                                           Expanded(
                                             child: Column(
                                               crossAxisAlignment:
@@ -151,24 +151,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       TextOverflow.ellipsis,
                                                 ),
                                                 const SizedBox(height: 8),
-                                                Row(
-                                                  children: [
-                                                    const Icon(
-                                                      Icons.map,
-                                                      size: 16,
-                                                      color: Colors.grey,
-                                                    ),
-                                                    const SizedBox(width: 4),
-                                                    Text(
-                                                      'Lat: ${item.lat}  |  Lng: ${item.lng}',
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 6),
+                                                // Row(
+                                                //   children: [
+                                                //     const Icon(
+                                                //       Icons.map,
+                                                //       size: 16,
+                                                //       color: Colors.grey,
+                                                //     ),
+                                                //     const SizedBox(width: 4),
+                                                //     Text(
+                                                //       'Lat: ${item.lat}  |  Lng: ${item.lng}',
+                                                //       style: const TextStyle(
+                                                //         fontSize: 14,
+                                                //         color: Colors.grey,
+                                                //       ),
+                                                //     ),
+                                                //   ],
+                                                // ),
+                                                // const SizedBox(height: 6),
                                                 _buildDateRow(
                                                   'Check-in',
                                                   item.checkinAt,
@@ -178,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 _buildDateRow(
                                                   'Check-out',
                                                   item.checkoutAt,
-                                                  Colors.red[700]!,
+                                                  Colors.green[700]!,
                                                 ),
                                               ],
                                             ),
@@ -281,14 +281,14 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         Icon(
           Icons.calendar_today,
-          size: 14,
+          size: 18,
           color: color,
         ),
         const SizedBox(width: 4),
         Text(
           '$label: $date',
           style: TextStyle(
-            fontSize: 12,
+            fontSize: 16,
             color: color,
             fontWeight: FontWeight.w500,
           ),

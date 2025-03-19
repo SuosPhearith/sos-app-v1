@@ -326,3 +326,4 @@ void showConfirmDialogWithNavigationOfSaleInvoice(BuildContext context,
     },
   );
 }
+

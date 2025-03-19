@@ -46,6 +46,21 @@ class _CustomerScreenState extends State<CustomerScreen> {
               backgroundColor: Colors.white,
               title: const Text("អតិថិជន"),
               centerTitle: true,
+              actions: [
+                GestureDetector(
+                  onTap: () {
+                    customerProvider.getCustomers();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.sync,
+                      color: Colors.blue,
+                      size: 33,
+                    ),
+                  ),
+                )
+              ],
             ),
             body: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -126,6 +141,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                         return CustomerActionItem(
                                           name: customer.name,
                                           phone: customer.phoneNumber,
+                                          createdAt: customer.createdAt,
                                           onTap: () {
                                             selectedCustomerProvider
                                                 .setSelectedCustomer(customer);
@@ -143,8 +159,10 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                               await customerService
                                                   .removeCustomer(
                                                       id: customer.id);
-                                              selectedCustomerProvider.clearSelectedCustomer();
-                                              await customerProvider.getCustomers(); // error here
+                                              selectedCustomerProvider
+                                                  .clearSelectedCustomer();
+                                              await customerProvider
+                                                  .getCustomers(); // error here
                                             });
                                           },
                                         );
@@ -174,6 +192,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
 class CustomerActionItem extends StatelessWidget {
   final String name;
   final String phone;
+  final DateTime createdAt;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
 
@@ -181,9 +200,15 @@ class CustomerActionItem extends StatelessWidget {
     super.key,
     required this.name,
     required this.phone,
+    required this.createdAt,
     this.onTap,
     this.onLongPress,
   });
+  bool isMoreThan5min(DateTime date) {
+    final DateTime now = DateTime.now();
+    final Duration difference = now.difference(date);
+    return difference.inMinutes < 5;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -225,6 +250,12 @@ class CustomerActionItem extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
+                      isMoreThan5min(createdAt)
+                          ? Text(
+                              "New",
+                              style: TextStyle(color: Colors.blue),
+                            )
+                          : SizedBox()
                     ],
                   ),
                   const SizedBox(height: 8),

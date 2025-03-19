@@ -130,7 +130,7 @@ class _CartScreenState extends State<CartScreen> {
                   Text(
                     cartItem.name,
                     style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -250,57 +250,54 @@ class _CartScreenState extends State<CartScreen> {
             height: 15,
           ),
           // Date and Time in One Row
-          Card(
-            elevation: 0,
-            color: Colors.white,
-            child: TextField(
-              controller: _dateController,
-              readOnly: true, // Prevents manual input
-              onTap: () async {
-                // Show date picker when tapped
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(), // Default selected date is today
-                  firstDate:
-                      DateTime.now(), // Earliest selectable date is today
-                  lastDate: DateTime(2101), // Latest selectable date is 2101
-                );
-                if (pickedDate != null) {
-                  // Format the date and set it to the controller
-                  String formattedDate =
-                      "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
-                  setState(() {
-                    _dateController.text = formattedDate;
-                  });
-                }
-              },
-              decoration: InputDecoration(
-                prefixIcon: const Icon(
-                    Icons.calendar_today), // Changed to calendar icon
-                labelText: 'បញ្ចូលថ្ងៃដឹក', // "Enter delivery date"
-                errorText: _loactoinError, // Show error message
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: _loactoinError != null ? Colors.red : Colors.blue,
-                    width: 1.0, // Red border if error, blue otherwise
+          SizedBox(
+            height: 50, // Reduced height
+            child: Card(
+              elevation: 0,
+              color: Colors.white,
+              child: TextField(
+                controller: _dateController,
+                readOnly: true,
+                onTap: () async {
+                  DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime(2101),
+                  );
+                  if (pickedDate != null) {
+                    String formattedDate =
+                        "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                    setState(() {
+                      _dateController.text = formattedDate;
+                    });
+                  }
+                },
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.calendar_today,
+                      size: 20), // Smaller icon
+                  labelText: 'បញ្ចូលថ្ងៃដឹក',
+                  errorText: _loactoinError,
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: 8, horizontal: 10), // Tight padding
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8)), // Smaller radius
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: _loactoinError != null ? Colors.red : Colors.blue,
+                      width: 1.0,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                    color: Colors.blue,
-                    width: 2.0, // Border color when focused
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: Colors.blue, width: 1.5),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  borderRadius: BorderRadius.circular(12),
                 ),
+                style: const TextStyle(fontSize: 14), // Smaller text
               ),
             ),
-          ),
-          SizedBox(
-            height: 10,
           ),
           GestureDetector(
             onTap: () {
@@ -314,14 +311,14 @@ class _CartScreenState extends State<CartScreen> {
               elevation: 0,
               color: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(8),
                 side: BorderSide(
                   color: Colors.blue,
                   width: 1.0,
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -347,9 +344,6 @@ class _CartScreenState extends State<CartScreen> {
                     ]),
               ),
             ),
-          ),
-          SizedBox(
-            height: 10,
           ),
           Card(
             elevation: 0,

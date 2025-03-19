@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:wsm_mobile_app/app_routes.dart';
 import 'package:wsm_mobile_app/services/check_in_service.dart';
+import 'package:wsm_mobile_app/widgets/helper.dart';
 
 class CheckInDetailScreen extends StatefulWidget {
   final String invoiceId;
@@ -81,6 +83,51 @@ class _CheckInDetailScreenState extends State<CheckInDetailScreen> {
                               checkInDetail?['lat']?.toString() ?? 'N/A'),
                           _buildInfoRow('Longitude',
                               checkInDetail?['lng']?.toString() ?? 'N/A'),
+                          ElevatedButton.icon(
+                            onPressed: () async {
+                              final double lat = checkInDetail?['lat'];
+                              final double lng = checkInDetail?['lng'];
+                              final String googleMapsUrl =
+                                  'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
+                              final Uri url = Uri.parse(googleMapsUrl);
+
+                              try {
+                                if (await canLaunchUrl(url)) {
+                                  await launchUrl(
+                                    url,
+                                    mode: LaunchMode
+                                        .externalApplication, // Try opening in Google Maps app
+                                  );
+                                } else {
+                                  await launchUrl(
+                                    url,
+                                    mode: LaunchMode
+                                        .platformDefault, // Fallback to browser
+                                  );
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  showErrorDialog(context, "មិនអាចទៅបានទេ");
+                                }
+                              }
+                            },
+                            icon: const Icon(Icons.map,
+                                color: Colors.white, size: 20), // Icon prefix
+                            label: const Text(
+                              'ទៅកាន់ផែនទី',
+                              style:
+                                  TextStyle(color: Colors.white), // White text
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue, // Blue button color
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8), // Adjust padding
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      8)), // Rounded corners
+                            ),
+                          ),
                         ]),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -107,6 +154,58 @@ class _CheckInDetailScreenState extends State<CheckInDetailScreen> {
                               'Address',
                               checkInDetail?['customer']?['address_name'] ??
                                   'Not provided'),
+                          checkInDetail?['customer']?['lat'] != null
+                              ? ElevatedButton.icon(
+                                  onPressed: () async {
+                                    final double lat =
+                                        checkInDetail?['customer']?['lat'];
+                                    final double lng =
+                                        checkInDetail?['customer']?['lng'];
+                                    final String googleMapsUrl =
+                                        'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
+                                    final Uri url = Uri.parse(googleMapsUrl);
+
+                                    try {
+                                      if (await canLaunchUrl(url)) {
+                                        await launchUrl(
+                                          url,
+                                          mode: LaunchMode
+                                              .externalApplication, // Try opening in Google Maps app
+                                        );
+                                      } else {
+                                        await launchUrl(
+                                          url,
+                                          mode: LaunchMode
+                                              .platformDefault, // Fallback to browser
+                                        );
+                                      }
+                                    } catch (e) {
+                                      if (context.mounted) {
+                                        showErrorDialog(
+                                            context, "មិនអាចទៅបានទេ");
+                                      }
+                                    }
+                                  },
+                                  icon: const Icon(Icons.map,
+                                      color: Colors.white,
+                                      size: 20), // Icon prefix
+                                  label: const Text(
+                                    'ទៅកាន់ផែនទី',
+                                    style: TextStyle(
+                                        color: Colors.white), // White text
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        Colors.blue, // Blue button color
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 8), // Adjust padding
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            8)), // Rounded corners
+                                  ),
+                                )
+                              : SizedBox()
                         ]),
                         Padding(
                           padding: const EdgeInsets.all(8.0),

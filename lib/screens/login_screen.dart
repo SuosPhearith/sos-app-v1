@@ -20,8 +20,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    _emailController.text = 'admin.001';
-    _passwordController.text = '12345678';
     super.initState();
   }
 
