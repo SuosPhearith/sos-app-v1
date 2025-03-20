@@ -251,6 +251,7 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                                 if (provider.isLoading) {
                                   return;
                                 }
+                                FocusManager.instance.primaryFocus?.unfocus();
                                 _outletModal(context, provider.outlets, (code) {
                                   setState(() {
                                     _selectedOutletType = code;
@@ -351,10 +352,8 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(left: 10),
-                                          child: _selectedAddress == null
-                                              ? Icon(Icons.map_outlined,
-                                                  color: Colors.black, size: 24)
-                                              : SizedBox(),
+                                          child: Icon(Icons.map_outlined,
+                                              color: Colors.black, size: 24),
                                         ),
                                         Expanded(
                                           child: Padding(
@@ -362,7 +361,9 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                                                 vertical: 8, horizontal: 10),
                                             child: Text(
                                               _selectedAddress != null
-                                                  ? _selectedAddress?.fullName ?? ""
+                                                  ? _selectedAddress
+                                                          ?.fullName ??
+                                                      ""
                                                   : 'ជ្រើសរើសទីតាំង',
                                               style:
                                                   const TextStyle(fontSize: 16),
@@ -382,111 +383,7 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                                 ),
                               ),
                             ),
-                            // Padding(
-                            //   padding: const EdgeInsets.all(8.0),
-                            //   child: SizedBox(
-                            //     height: 40,
-                            //     child: Row(
-                            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            //       crossAxisAlignment: CrossAxisAlignment.stretch,
-                            //       children: [
-                            //         Expanded(
-                            //           child: GestureDetector(
-                            //             onTap: () {
-                            //               setState(() {
-                            //                 _selectedOutletType = 'retail';
-                            //               });
-                            //             },
-                            //             child: Container(
-                            //               padding: EdgeInsets.symmetric(
-                            //                   horizontal: 12, vertical: 8),
-                            //               margin: EdgeInsets.only(right: 8),
-                            //               decoration: BoxDecoration(
-                            //                 color: _selectedOutletType == 'retail'
-                            //                     ? Colors.blue
-                            //                     : Colors.white,
-                            //                 border: Border.all(color: Colors.grey),
-                            //                 borderRadius: BorderRadius.circular(8),
-                            //               ),
-                            //               child: Center(
-                            //                 child: Text(
-                            //                   'ហាងលក់រាយ',
-                            //                   style: TextStyle(
-                            //                     color: _selectedOutletType == 'retail'
-                            //                         ? Colors.white
-                            //                         : Colors.black,
-                            //                   ),
-                            //                 ),
-                            //               ),
-                            //             ),
-                            //           ),
-                            //         ),
-                            //         Expanded(
-                            //           child: GestureDetector(
-                            //             onTap: () {
-                            //               setState(() {
-                            //                 _selectedOutletType = 'restaurant';
-                            //               });
-                            //             },
-                            //             child: Container(
-                            //               padding: EdgeInsets.symmetric(
-                            //                   horizontal: 12, vertical: 8),
-                            //               margin: EdgeInsets.only(right: 8),
-                            //               decoration: BoxDecoration(
-                            //                 color: _selectedOutletType == 'restaurant'
-                            //                     ? Colors.blue
-                            //                     : Colors.white,
-                            //                 border: Border.all(color: Colors.grey),
-                            //                 borderRadius: BorderRadius.circular(8),
-                            //               ),
-                            //               child: Center(
-                            //                 child: Text(
-                            //                   'ភោជនីយដ្ឋាន',
-                            //                   style: TextStyle(
-                            //                     color: _selectedOutletType ==
-                            //                             'restaurant'
-                            //                         ? Colors.white
-                            //                         : Colors.black,
-                            //                   ),
-                            //                 ),
-                            //               ),
-                            //             ),
-                            //           ),
-                            //         ),
-                            //         Expanded(
-                            //           child: GestureDetector(
-                            //             onTap: () {
-                            //               setState(() {
-                            //                 _selectedOutletType = 'other';
-                            //               });
-                            //             },
-                            //             child: Container(
-                            //               padding: EdgeInsets.symmetric(
-                            //                   horizontal: 12, vertical: 8),
-                            //               decoration: BoxDecoration(
-                            //                 color: _selectedOutletType == 'other'
-                            //                     ? Colors.blue
-                            //                     : Colors.white,
-                            //                 border: Border.all(color: Colors.grey),
-                            //                 borderRadius: BorderRadius.circular(8),
-                            //               ),
-                            //               child: Center(
-                            //                 child: Text(
-                            //                   'ផ្សេងៗ',
-                            //                   style: TextStyle(
-                            //                     color: _selectedOutletType == 'other'
-                            //                         ? Colors.white
-                            //                         : Colors.black,
-                            //                   ),
-                            //                 ),
-                            //               ),
-                            //             ),
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //   ),
-                            // ),
+
                             SizedBox(height: 20),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -667,45 +564,6 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                                 ),
                               ),
                             ),
-                            // Row(
-                            //   children: [
-                            //     Padding(
-                            //       padding: const EdgeInsets.only(left: 8),
-                            //       child: Text.rich(
-                            //         TextSpan(
-                            //           children: [
-                            //             TextSpan(text: 'ឈ្មោះផ្លូវ'),
-                            //           ],
-                            //         ),
-                            //       ),
-                            //     ),
-                            //   ],
-                            // ),
-                            // Padding(
-                            //   padding:
-                            //       const EdgeInsets.only(bottom: 8, right: 8, left: 8),
-                            //   child: SizedBox(
-                            //     height: 50,
-                            //     child: TextField(
-                            //       controller: _streetNameController,
-                            //       decoration: InputDecoration(
-                            //         hintText: 'ឈ្មោះផ្លូវ',
-                            //         prefixIcon: const Icon(Icons.streetview,
-                            //             color: Colors.black, size: 24),
-                            //         border: OutlineInputBorder(
-                            //           borderRadius: BorderRadius.circular(8),
-                            //           borderSide: const BorderSide(
-                            //               color: Colors.blue, width: 1),
-                            //         ),
-                            //         contentPadding: const EdgeInsets.symmetric(
-                            //             vertical: 8, horizontal: 10),
-                            //         filled: true,
-                            //         fillColor: Colors.white,
-                            //       ),
-                            //       style: const TextStyle(fontSize: 16),
-                            //     ),
-                            //   ),
-                            // ),
                           ],
                         ),
                       ),
@@ -720,6 +578,7 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                           height: 50,
                           child: ElevatedButton(
                             onPressed: () async {
+                              FocusManager.instance.primaryFocus?.unfocus();
                               if (_customerNameController.text.isEmpty ||
                                   _phoneController.text.isEmpty ||
                                   _selectedAddress == null ||

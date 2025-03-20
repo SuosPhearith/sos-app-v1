@@ -63,132 +63,193 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: homeProvider.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : homeProvider.checkInRes == null
-                        ? Text('No Data')
+                        ? const Text('No Data')
                         : ListView(
                             children: [
-                              ...homeProvider.checkInRes!.data.map((item) {
-                                return GestureDetector(
-                                  onTap: () async {
-                                    if (item.checkoutAt == '') {
-                                      await homeProvider.setCheckInId(
-                                          checkInId: item.id.toString());
-                                      if (context.mounted) {
-                                        context.push(AppRoutes.checkIn);
-                                      }
-                                    } else {
-                                      if (context.mounted) {
-                                        context.push(
-                                            '${AppRoutes.checkInDetail}/${item.id}');
-                                      }
-                                    }
-                                  },
-                                  onLongPress: () {
-                                    if (item.checkoutAt != '') {
-                                      return showErrorDialog(
-                                          context, 'មិនអាចលុបបានទេ!');
-                                    }
-                                    showConfirmDialog(
-                                        context,
-                                        'បញ្ចាក់ការលុប',
-                                        "តើអ្នកពិតជាចង់លុប Check In មែនទេ?",
-                                        DialogType.danger, () async {
-                                      final CheckInService checkInService =
-                                          CheckInService();
-                                      await checkInService.cancelCheckIn(
-                                          id: item.id);
-                                      await homeProvider.setCheckInId(
-                                          checkInId: '');
-                                      await homeProvider.getCheckInHistory();
-                                    });
-                                  },
-                                  child: Card(
-                                    color: item.checkoutAt == ''
-                                        ? Colors.blue[100]
-                                        : Colors.white,
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    margin: const EdgeInsets.only(bottom: 8),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          // Container(
-                                          //   padding: const EdgeInsets.all(8),
-                                          //   decoration: BoxDecoration(
-                                          //     color: Colors.blue[50],
-                                          //     borderRadius:
-                                          //         BorderRadius.circular(12),
-                                          //   ),
-                                          //   child: const Icon(
-                                          //     Icons.location_on,
-                                          //     color: Colors.blue,
-                                          //     size: 28,
-                                          //   ),
-                                          // ),
-                                          // const SizedBox(width: 12),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  item.customerId == ''
-                                                      ? 'រងចាំការ Check Out'
-                                                      : item.customerName,
+                              // Add variable to track previous date
+                              () {
+                                String? previousDateText;
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children:
+                                      homeProvider.checkInRes!.data.map((item) {
+                                    // Get current date without time for comparison
+                                    final now = DateTime.now();
+                                    final today =
+                                        DateTime(now.year, now.month, now.day);
+
+                                    // Parse item's checkinAt date
+                                    final checkInDateTime =
+                                        DateTime.parse(item.checkinAt);
+                                    final checkInDate = DateTime(
+                                        checkInDateTime.year,
+                                        checkInDateTime.month,
+                                        checkInDateTime.day);
+
+                                    // Check if the item is from today
+                                    final isToday = today == checkInDate;
+
+                                    // Manual date formatting
+                                    final dateText = isToday
+                                        ? 'ថ្ងៃនេះ'
+                                        : '${checkInDateTime.day.toString().padLeft(2, '0')}/'
+                                            '${checkInDateTime.month.toString().padLeft(2, '0')}/'
+                                            '${checkInDateTime.year}';
+
+                                    // Create date header only if date changes
+                                    final dateHeader =
+                                        previousDateText != dateText
+                                            ? Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 8, top: 8),
+                                                child: Text(
+                                                  dateText,
                                                   style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: item.checkoutAt == ''
-                                                        ? Colors.blue[700]
-                                                        : Colors.black87,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.grey[700],
                                                   ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
                                                 ),
-                                                const SizedBox(height: 8),
-                                                // Row(
-                                                //   children: [
-                                                //     const Icon(
-                                                //       Icons.map,
-                                                //       size: 16,
-                                                //       color: Colors.grey,
-                                                //     ),
-                                                //     const SizedBox(width: 4),
-                                                //     Text(
-                                                //       'Lat: ${item.lat}  |  Lng: ${item.lng}',
-                                                //       style: const TextStyle(
-                                                //         fontSize: 14,
-                                                //         color: Colors.grey,
-                                                //       ),
-                                                //     ),
-                                                //   ],
-                                                // ),
-                                                // const SizedBox(height: 6),
-                                                _buildDateRow(
-                                                  'Check-in',
-                                                  item.checkinAt,
-                                                  Colors.blue[700]!,
-                                                ),
-                                                const SizedBox(height: 6),
-                                                _buildDateRow(
-                                                  'Check-out',
-                                                  item.checkoutAt,
-                                                  Colors.green[700]!,
-                                                ),
-                                              ],
+                                              )
+                                            : const SizedBox.shrink();
+
+                                    // Update previousDateText for next iteration
+                                    previousDateText = dateText;
+
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        dateHeader,
+                                        GestureDetector(
+                                          onTap: () async {
+                                            if (item.checkoutAt.isEmpty) {
+                                              await homeProvider.setCheckInId(
+                                                  checkInId:
+                                                      item.id.toString());
+                                              if (context.mounted) {
+                                                context.push(AppRoutes.checkIn);
+                                              }
+                                            } else {
+                                              if (context.mounted) {
+                                                context.push(
+                                                    '${AppRoutes.checkInDetail}/${item.id}');
+                                              }
+                                            }
+                                          },
+                                          onLongPress: () {
+                                            if (item.checkoutAt.isNotEmpty) {
+                                              return showErrorDialog(
+                                                  context, 'មិនអាចលុបបានទេ!');
+                                            }
+                                            showConfirmDialog(
+                                              context,
+                                              'បញ្ចាក់ការលុប',
+                                              "តើអ្នកពិតជាចង់លុប Check In មែនទេ?",
+                                              DialogType.danger,
+                                              () async {
+                                                final checkInService =
+                                                    CheckInService();
+                                                await checkInService
+                                                    .cancelCheckIn(id: item.id);
+                                                await homeProvider.setCheckInId(
+                                                    checkInId: '');
+                                                await homeProvider
+                                                    .getCheckInHistory();
+                                              },
+                                            );
+                                          },
+                                          child: Card(
+                                            elevation: 0,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              side: BorderSide(
+                                                color: item.checkoutAt.isEmpty
+                                                    ? Colors.blue[200]!
+                                                    : Colors.grey[200]!,
+                                                width: 1,
+                                              ),
+                                            ),
+                                            color: item.checkoutAt.isEmpty
+                                                ? Colors.blue[50]
+                                                : Colors.white,
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(16),
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    width: 4,
+                                                    height: 60,
+                                                    decoration: BoxDecoration(
+                                                      color: item.checkoutAt
+                                                              .isEmpty
+                                                          ? Colors.blue[600]
+                                                          : Colors.green[600],
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              2),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 12),
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          item.customerId
+                                                                  .isEmpty
+                                                              ? 'រងចាំការ Check Out'
+                                                              : item
+                                                                  .customerName,
+                                                          style: TextStyle(
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: item
+                                                                    .checkoutAt
+                                                                    .isEmpty
+                                                                ? Colors
+                                                                    .blue[800]
+                                                                : Colors
+                                                                    .grey[900],
+                                                            letterSpacing: 0.2,
+                                                          ),
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 12),
+                                                        _buildDateRow(
+                                                          'Check-in',
+                                                          item.checkinAt,
+                                                          Colors.blue[700]!,
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 8),
+                                                        _buildDateRow(
+                                                          'Check-out',
+                                                          item.checkoutAt,
+                                                          Colors.green[700]!,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
+                                        ),
+                                      ],
+                                    );
+                                  }).toList(),
                                 );
-                              }),
+                              }(),
                             ],
                           ),
               ),

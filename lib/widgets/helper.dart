@@ -151,7 +151,7 @@ void showErrorDialog(
                 ),
           
                 child: const Text(
-                  "យល់ព្រម", // "OK" in Khmer
+                  "បិទ", // "OK" in Khmer
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

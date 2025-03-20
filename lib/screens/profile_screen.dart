@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
+import 'package:wsm_mobile_app/error_type.dart';
 import 'package:wsm_mobile_app/providers/global/auth_provider.dart';
 import 'package:wsm_mobile_app/utils/type.dart';
 import 'package:wsm_mobile_app/widgets/helper.dart';
@@ -95,14 +96,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   children: [
                     ProfileActionItem(
-                      icon: Icons.edit,
-                      text: 'Edit Profile',
-                      onTap: () {},
+                      icon: Icons.delete_outline,
+                      text: 'សូមចុចពេលមានបញ្ហាបង្កើត Check In',
+                      onTap: () {
+                        showConfirmDialog(
+                            context,
+                            "បញ្ជាក់",
+                            "តើអ្នកពិតជាមិនអាចបង្កើត Check In មែនទេ?",
+                            DialogType.danger, () async {
+                          try {
+                            final FlutterSecureStorage flutterSecureStorage =
+                                FlutterSecureStorage();
+                            await flutterSecureStorage.delete(key: 'checkIn');
+                          } catch (e) {
+                            if (context.mounted) {
+                              showErrorDialog(
+                                  context, ErrorType.somethingWentWrong);
+                            }
+                          }
+                        });
+                      },
                     ),
                     const SizedBox(height: 8),
                     ProfileActionItem(
                       icon: Icons.lock_outline,
-                      text: 'Change Password',
+                      text: 'ផ្លាស់ប្តូរពាក្យសម្ងាត់',
                       onTap: () {},
                     ),
                     const SizedBox(height: 8),

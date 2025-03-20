@@ -115,23 +115,35 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
                             "លេខវិក្កយបត្រ: ${orderDetail!['order_no']}",
                             style: const TextStyle(fontSize: 16),
                           ),
+                          const SizedBox(height: 15),
                           Text(
-                            "អតិថិជន: ${orderDetail!['customer']['id']}",
+                            "ឈ្មោះអតិថិជន: ${orderDetail!['customer']['name']}",
                             style: const TextStyle(fontSize: 16),
                           ),
-                          const SizedBox(height: 4),
                           Text(
                             "លេខទូរស័ព្ទ: ${orderDetail!['customer']['phone_number']}",
                             style: const TextStyle(fontSize: 16),
                           ),
-                          const SizedBox(height: 4),
                           Text(
-                            "អាសយដ្ឋាន: ${orderDetail!['customer']['address_name']}",
+                            "លេខអតិថិជន: ${orderDetail!['customer']['id']}",
                             style: const TextStyle(fontSize: 16),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 15),
                           Text(
-                            "ចំណាំ: ${orderDetail!['remark']}",
+                            "ថ្ងៃដឹក: ${orderDetail!['shipping']['delivery_date']}",
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          Text(
+                            "ម៉ោងដឹក: ${orderDetail!['shipping']['time_slot']}",
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          Text(
+                            "ទីតាំងដឹក: ${orderDetail!['shipping']['shipping_address']}",
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 15),
+                          Text(
+                            "ចំណាំ: ${orderDetail!['remark'] ?? ""}",
                             style: const TextStyle(fontSize: 16),
                           ),
                           const SizedBox(height: 16),
@@ -189,8 +201,9 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
                                     Text(
                                       Help.priceValueWithCurrency(
                                         ((item['qty'] ?? 1) *
-                                            (item['product_detail']
-                                                ['unit_price']) as num).toDouble(),
+                                                (item['product_detail']
+                                                    ['unit_price']) as num)
+                                            .toDouble(),
                                         orderDetail!['currency'] ?? 'USD',
                                       ),
                                       style: const TextStyle(
