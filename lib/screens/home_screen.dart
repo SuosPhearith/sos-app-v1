@@ -24,8 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => HomeProvider(),
-      child: Consumer2<CheckOutProvider, HomeProvider>(
-          builder: (context, checkOutProvider, homeProvider, child) {
+      child: Consumer<HomeProvider>(builder: (context, homeProvider, child) {
         return Scaffold(
           backgroundColor: Colors.grey[200],
           appBar: AppBar(
@@ -42,8 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
             centerTitle: true,
             actions: [
               GestureDetector(
-                onTap: () {
-                  homeProvider.getCheckInHistory();
+                onTap: () async {
+                  await homeProvider.getCheckInHistory();
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -63,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: homeProvider.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : homeProvider.checkInRes == null
-                        ? Center(child: const Text('No Data'))
+                        ? const Text('No Data')
                         : ListView(
                             children: [
                               // Add variable to track previous date
@@ -283,13 +282,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
               try {
                 if (position != null) {
-                  checkOutProvider.setCheckIn(
-                      check: CheckIn(
-                          checkinAt: Help.getFormattedCurrentDateTime(),
-                          lat: position['lat'] ?? 0.0,
-                          lng: position['lng'] ?? 0.0,
-                          customerId: '',
-                          addressName: position['address'] ?? "Unknown"));
+                  if (context.mounted) {
+                    Provider.of<CheckOutProvider>(context, listen: false)
+                        .setCheckIn(
+                            check: CheckIn(
+                                checkinAt: Help.getFormattedCurrentDateTime(),
+                                lat: position['lat'] ?? 0.0,
+                                lng: position['lng'] ?? 0.0,
+                                customerId: '',
+                                addressName: position['address'] ?? "Unknown"));
+                  }
                   Map<String, dynamic> res = await checkInService.makeCheckIn(
                       lat: position['lat'].toString(),
                       lng: position['lng'].toString());

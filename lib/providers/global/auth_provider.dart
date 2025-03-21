@@ -115,12 +115,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       _isLoading = true;
       notifyListeners();
-      String? token = await _storage.read(key: 'token');
-      if (token == null || token.isEmpty) {
-        _isLoggedIn = false;
-      } else {
-        _isLoggedIn = await _validateToken(token);
-      }
+      _isLoggedIn = await _validateToken();
     } catch (e) {
       _isLoggedIn = false;
     } finally {
@@ -129,9 +124,13 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> _validateToken(String token) async {
+  Future<bool> _validateToken() async {
     // Verrify token in here
-    await _authService.checkAuth();
-    return token.isNotEmpty;
+    try {
+      await _authService.checkAuth();
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }
