@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_image_gallery_saver/flutter_image_gallery_saver.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +6,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:wsm_mobile_app/services/invoice_service.dart';
 import 'package:wsm_mobile_app/utils/help.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 class InvoiceDetailScreen extends StatefulWidget {
   final String invoiceId;
@@ -22,6 +24,7 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
   List<Map<String, dynamic>>? items;
   bool isLoading = false;
   final InvoiceService invoiceService = InvoiceService();
+  final ScreenshotController invoiceController = ScreenshotController();
 
   @override
   void initState() {
@@ -31,9 +34,7 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
 
   Future<void> _loadInvoice() async {
     try {
-      setState(() {
-        isLoading = true;
-      });
+      setState(() => isLoading = true);
       final Map<String, dynamic> res =
           await invoiceService.getInvoicesDetail(orderNo: widget.invoiceId);
       final List<Map<String, dynamic>> itemsRes =
@@ -45,14 +46,9 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
       });
     } catch (e) {
       debugPrint('Error loading invoice: $e');
-      setState(() {
-        isLoading = false;
-      });
+      setState(() => isLoading = false);
     }
   }
-
-  final invoiceController =
-      ScreenshotController(); // Controller for invoice widget only
 
   @override
   Widget build(BuildContext context) {
@@ -64,27 +60,16 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            context.pop();
-          },
+          onPressed: () => context.pop(),
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.save_alt),
-            onPressed: () async {
-              final image = await invoiceController
-                  .capture(); // Capture only the invoice widget
-              if (image == null) return;
-              await saveImage(image);
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: const Text('Invoice saved successfully!'),
-                    duration: const Duration(seconds: 2),
-                  ),
-                );
-              }
-            },
+            onPressed: _saveInvoice,
+          ),
+          IconButton(
+            icon: const Icon(Icons.share), // Add share button
+            onPressed: _shareInvoice,
           ),
         ],
       ),
@@ -96,8 +81,7 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
                   padding: const EdgeInsets.all(16),
                   child: Center(
                     child: Screenshot(
-                      controller:
-                          invoiceController, // Wrap only the invoice content
+                      controller: invoiceController,
                       child: Container(
                         constraints: const BoxConstraints(maxWidth: 600),
                         decoration: BoxDecoration(
@@ -315,12 +299,56 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
     );
   }
 
+  Future<void> _saveInvoice() async {
+    final image = await invoiceController.capture();
+    if (image == null) return;
+    await saveImage(image);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Invoice saved successfully!'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+  Future<void> _shareInvoice() async {
+    final image = await invoiceController.capture();
+    if (image == null) return;
+
+    try {
+      final tempDir = await getTemporaryDirectory();
+      final filePath = '${tempDir.path}/invoice_${widget.invoiceId}.png';
+      final file = File(filePath);
+      await file.writeAsBytes(image);
+
+      await Share.shareXFiles(
+        [XFile(filePath)],
+        text: 'នេះជាវិក្កយបត្ររបស់អ្នក #${widget.invoiceId}\nអរគុណ! 😊🙏',
+      );
+
+      await file.delete();
+    } catch (e) {
+      debugPrint('Error sharing invoice: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to share invoice.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+  }
+
   Future<bool> saveImage(Uint8List bytes) async {
     try {
       await [Permission.storage].request();
       await FlutterImageGallerySaver.saveImage(bytes);
       return true;
     } catch (e) {
+      debugPrint('Error saving image: $e');
       return false;
     }
   }

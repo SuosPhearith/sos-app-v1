@@ -131,6 +131,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<bool> _validateToken(String token) async {
     // Verrify token in here
+    await _authService.checkAuth();
     return token.isNotEmpty;
   }
 }
