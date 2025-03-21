@@ -57,6 +57,30 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  // Change password
+  Future<void> handleChangePassword({
+    required String password,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      Map<String, dynamic> token = await _authService.changePassword(
+          password: password,
+          newPassword: newPassword,
+          confirmPassword: confirmPassword);
+      await _storage.write(key: 'token', value: token['token']);
+      await handleCheckAuth();
+    } catch (e) {
+      _error = "Invalid Credential.";
+      rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> saveAuthData(Map<String, dynamic> token) async {
     try {
       // Store token

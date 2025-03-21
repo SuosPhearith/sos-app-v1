@@ -42,7 +42,7 @@ class CheckInService {
     String categoryId = '',
     String keyword = '',
     int page = 1,
-    int perPage = 50,
+    int perPage = 100,
   }) async {
     try {
       String? posId = await _storage.read(key: 'posId');

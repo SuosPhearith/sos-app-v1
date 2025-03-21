@@ -404,6 +404,12 @@ class _CartScreenState extends State<CartScreen> {
                       }
                       cartProvider.clearCart();
                       if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('កម្ម៉ង់ជោគជ័យ!'),
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
                         context.go(AppRoutes.checkIn);
                       }
                     });

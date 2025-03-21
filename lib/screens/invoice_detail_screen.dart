@@ -76,12 +76,14 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
                   .capture(); // Capture only the invoice widget
               if (image == null) return;
               await saveImage(image);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('Invoice saved successfully!'),
-                  duration: const Duration(seconds: 2),
-                ),
-              );
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('Invoice saved successfully!'),
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              }
             },
           ),
         ],

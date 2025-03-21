@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:wsm_mobile_app/app_routes.dart';
 import 'package:wsm_mobile_app/error_type.dart';
 import 'package:wsm_mobile_app/providers/global/auth_provider.dart';
 import 'package:wsm_mobile_app/utils/type.dart';
@@ -121,7 +123,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ProfileActionItem(
                       icon: Icons.lock_outline,
                       text: 'ផ្លាស់ប្តូរពាក្យសម្ងាត់',
-                      onTap: () {},
+                      onTap: () {
+                        context.push(AppRoutes.changePassword);
+                      },
                     ),
                     const SizedBox(height: 8),
                     ProfileActionItem(

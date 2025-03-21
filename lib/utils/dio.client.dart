@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
+import 'package:wsm_mobile_app/providers/global/auth_provider.dart';
 
 class DioClient {
   static final Dio _dio = Dio(BaseOptions(
@@ -67,7 +69,11 @@ class DioClient {
 
           return handler.next(response);
         },
-        onError: (DioException e, handler) {
+        onError: (DioException e, handler) async {
+          if (e.response?.statusCode == 401) {
+            await Provider.of<AuthProvider>(context, listen: false)
+                .handleLogout();
+          }
           print("\x1B[31m❌ onError Triggered: ${e.requestOptions.path}\x1B[0m");
 
           if (e.response != null) {

@@ -10,7 +10,7 @@ class AuthMiddleware extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(builder: (context, auth, _) {
-      if (auth.isLoggedIn && !auth.isLoading) {
+      if (auth.isLoggedIn) {
         return child;
       }
       return LoginScreen();

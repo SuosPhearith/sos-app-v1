@@ -9,6 +9,7 @@ import 'package:wsm_mobile_app/providers/global/cart_provider.dart';
 import 'package:wsm_mobile_app/providers/global/check_out_provider.dart';
 import 'package:wsm_mobile_app/providers/global/selected_customer_provider.dart';
 import 'package:wsm_mobile_app/screens/cart_screen.dart';
+import 'package:wsm_mobile_app/screens/change_password_screen.dart';
 import 'package:wsm_mobile_app/screens/check_in_detail_screen.dart';
 import 'package:wsm_mobile_app/screens/check_in_screen.dart';
 import 'package:wsm_mobile_app/screens/customer_screen.dart';
@@ -118,6 +119,11 @@ final GoRouter _router = GoRouter(
       path: AppRoutes.cart,
       builder: (context, state) =>
           AuthMiddleware(child: const AuthLayout(child: CartScreen())),
+    ),
+    GoRoute(
+      path: AppRoutes.changePassword,
+      builder: (context, state) => AuthMiddleware(
+          child: const AuthLayout(child: ChangePasswordScreen())),
     ),
     GoRoute(
       path: '${AppRoutes.invoiceDetail}/:id', // Dynamic ":id" parameter

@@ -63,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: homeProvider.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : homeProvider.checkInRes == null
-                        ? const Text('No Data')
+                        ? Center(child: const Text('No Data'))
                         : ListView(
                             children: [
                               // Add variable to track previous date
