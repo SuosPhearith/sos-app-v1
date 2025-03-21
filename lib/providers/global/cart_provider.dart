@@ -23,8 +23,26 @@ class CartProvider extends ChangeNotifier {
 
   // Functions
   void addToCart({required Cart cart}) {
-    _cart.add(cart);
-    notifyListeners();
+    // Check if a product with the same productId already exists in the cart
+    int existingIndex =
+        _cart.indexWhere((item) => item.productId == cart.productId);
+
+    if (existingIndex != -1) {
+      _cart[existingIndex] = Cart(
+        productId: _cart[existingIndex].productId,
+        qty: _cart[existingIndex].qty + cart.qty,
+        note: _cart[existingIndex].note ?? cart.note,
+        name: _cart[existingIndex].name,
+        unitPrice: _cart[existingIndex].unitPrice,
+        thumbnail: _cart[existingIndex].thumbnail ?? cart.thumbnail,
+        currency: _cart[existingIndex].currency ?? cart.currency,
+      );
+    } else {
+      // Product doesn't exist, add it as a new item
+      _cart.add(cart);
+    }
+
+    notifyListeners(); // Notify listeners to update UI
   }
 
   void removeCart({required Cart cart}) {

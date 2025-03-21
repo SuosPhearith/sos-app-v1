@@ -43,16 +43,16 @@ android {
         dev {
             dimension "default"
             applicationIdSuffix ".dev"
-            resValue "string", "app_name", "DMS DEV"
+            resValue "string", "app_name", "SOS DEV"
         }
         staging {
             dimension "default"
             applicationIdSuffix ".staging"
-            resValue "string", "app_name", "DMS STAGING"
+            resValue "string", "app_name", "SOS STAGING"
         }
         prod {
             dimension "default"
-            resValue "string", "app_name", "DMS"
+            resValue "string", "app_name", "SOS"
         }
     }
 }

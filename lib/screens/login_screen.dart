@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const Icon(Icons.lock, size: 80, color: Colors.blue),
                       const SizedBox(height: 24),
                       const Text(
-                        'សូមស្វាគមន៍មកកាន់ DMS',
+                        'សូមស្វាគមន៍មកកាន់ SOS',
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
