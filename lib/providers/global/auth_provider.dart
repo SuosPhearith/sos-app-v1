@@ -7,6 +7,7 @@ class AuthProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _error;
   bool _isLoggedIn = false;
+  bool _isChecking = false;
 
   // Services
   final FlutterSecureStorage _storage = FlutterSecureStorage();
@@ -16,6 +17,7 @@ class AuthProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
   bool get isLoggedIn => _isLoggedIn;
+  bool get isChecking => _isChecking;
 
   // Setters
 
@@ -113,13 +115,13 @@ class AuthProvider extends ChangeNotifier {
   // Check Auth
   Future<void> handleCheckAuth() async {
     try {
-      _isLoading = true;
+      _isChecking = true;
       notifyListeners();
       _isLoggedIn = await _validateToken();
     } catch (e) {
       _isLoggedIn = false;
     } finally {
-      _isLoading = false;
+      _isChecking = false;
       notifyListeners();
     }
   }

@@ -59,7 +59,25 @@ class Help {
   }
 
   static bool isValidKhmerPhoneNumber(String phoneNumber) {
+    String cleanedNumber = phoneNumber.replaceAll(RegExp(r'[\s-]'), '');
+    
+    // Check if it starts with '0' and length is between 9 and 10
+    if (!cleanedNumber.startsWith('0') || 
+        cleanedNumber.length < 9 || 
+        cleanedNumber.length > 10) {
+      return false;
+    }
+    
+    // Check if it contains only digits
+    if (!RegExp(r'^\d+$').hasMatch(cleanedNumber)) {
+      return false;
+    }
+    
     return true;
+}
+
+  // static bool isValidKhmerPhoneNumber(String phoneNumber) {
+    // return true;
     // String cleanedNumber = phoneNumber.replaceAll(RegExp(r'[\s-]'), '');
     // if (!cleanedNumber.startsWith('0') ||
     //     cleanedNumber.length < 9 ||
@@ -105,7 +123,7 @@ class Help {
     //   '099'
     // ];
     // return validPrefixes.any((prefix) => cleanedNumber.startsWith(prefix));
-  }
+  // }
 
   static String getFormattedCurrentDateTime() {
     DateTime now = DateTime.now();

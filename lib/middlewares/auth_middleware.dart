@@ -10,6 +10,14 @@ class AuthMiddleware extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(builder: (context, auth, _) {
+      if(auth.isChecking){
+        return Scaffold(
+          backgroundColor: Colors.grey[200],
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      }
       if (auth.isLoggedIn) {
         return child;
       }

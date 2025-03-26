@@ -164,6 +164,7 @@ class MainLayout extends StatefulWidget {
 
 class _MainLayoutState extends State<MainLayout> {
   int _currentIndex = 0;
+  static const flavor = String.fromEnvironment('FLAVOR', defaultValue: 'dev');
 
   final List<Widget> _pages = [
     const HomeScreen(),
@@ -175,7 +176,44 @@ class _MainLayoutState extends State<MainLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: _pages[_currentIndex],
+        child: Stack(
+          children: [
+            _pages[_currentIndex],
+            if (flavor == 'dev')
+              Positioned(
+                bottom: 10,
+                left: 10,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: Colors.cyanAccent,
+                      width: 2,
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 2,
+                  ),
+                  child: const Text(
+                    'DEV',
+                    style: TextStyle(
+                      color: Colors.cyanAccent,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                      shadows: [
+                        Shadow(
+                          color: Colors.cyanAccent,
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
@@ -187,8 +225,7 @@ class _MainLayoutState extends State<MainLayout> {
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.grey,
         items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home_filled), label: "ទំព័រដើម"),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "ទំព័រដើម"),
           BottomNavigationBarItem(
               icon: Icon(Icons.receipt), label: "វិក្កយបត្រ"),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "គណនី"),
@@ -202,11 +239,48 @@ class _MainLayoutState extends State<MainLayout> {
 class AuthLayout extends StatelessWidget {
   final Widget child;
   const AuthLayout({required this.child, super.key});
+  static const flavor = String.fromEnvironment('FLAVOR', defaultValue: 'dev');
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(child: child), // Displays the Login or other pages
+      body: SafeArea(
+          child: Stack(children: [
+        child,
+        if (flavor == 'dev')
+          Positioned(
+            bottom: 10,
+            left: 10,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                  color: Colors.cyanAccent,
+                  width: 2,
+                ),
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 4,
+                vertical: 2,
+              ),
+              child: const Text(
+                'DEV',
+                style: TextStyle(
+                  color: Colors.cyanAccent,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                  shadows: [
+                    Shadow(
+                      color: Colors.cyanAccent,
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+      ])), // Displays the Login or other pages
     );
   }
 }
