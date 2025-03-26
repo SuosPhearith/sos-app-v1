@@ -59,50 +59,52 @@ class Help {
   }
 
   static bool isValidKhmerPhoneNumber(String phoneNumber) {
-    String cleanedNumber = phoneNumber.replaceAll(RegExp(r'[\s-]'), '');
-    if (!cleanedNumber.startsWith('0') ||
-        cleanedNumber.length < 9 ||
-        cleanedNumber.length > 10) {
-      return false;
-    }
-    if (!RegExp(r'^\d+$').hasMatch(cleanedNumber)) {
-      return false;
-    }
-    const validPrefixes = [
-      '010',
-      '011',
-      '012',
-      '015',
-      '016',
-      '017',
-      '031',
-      '060',
-      '061',
-      '067',
-      '068',
-      '069',
-      '070',
-      '076',
-      '077',
-      '078',
-      '079',
-      '080',
-      '081',
-      '085',
-      '086',
-      '087',
-      '088',
-      '089',
-      '090',
-      '092',
-      '093',
-      '095',
-      '096',
-      '097',
-      '098',
-      '099'
-    ];
-    return validPrefixes.any((prefix) => cleanedNumber.startsWith(prefix));
+    return true;
+    // String cleanedNumber = phoneNumber.replaceAll(RegExp(r'[\s-]'), '');
+    // if (!cleanedNumber.startsWith('0') ||
+    //     cleanedNumber.length < 9 ||
+    //     cleanedNumber.length > 10) {
+    //   return false;
+    // }
+    // if (!RegExp(r'^\d+$').hasMatch(cleanedNumber)) {
+    //   return false;
+    // }
+    // const validPrefixes = [
+    //   '010',
+    //   '011',
+    //   '012',
+    //   '015',
+    //   '016',
+    //   '017',
+    //   '031',
+    //   '060',
+    //   '061',
+    //   '067',
+    //   '068',
+    //   '069',
+    //   '070',
+    //   '071',
+    //   '076',
+    //   '077',
+    //   '078',
+    //   '079',
+    //   '080',
+    //   '081',
+    //   '085',
+    //   '086',
+    //   '087',
+    //   '088',
+    //   '089',
+    //   '090',
+    //   '092',
+    //   '093',
+    //   '095',
+    //   '096',
+    //   '097',
+    //   '098',
+    //   '099'
+    // ];
+    // return validPrefixes.any((prefix) => cleanedNumber.startsWith(prefix));
   }
 
   static String getFormattedCurrentDateTime() {

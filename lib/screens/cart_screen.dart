@@ -571,7 +571,7 @@ class _CartScreenState extends State<CartScreen> {
                           const SizedBox(height: 8),
                           GestureDetector(
                             onTap: () {
-                              onConfirm('05AM - 08PM');
+                              onConfirm('05PM - 08PM');
                               Navigator.pop(context);
                             },
                             child: Container(
@@ -598,7 +598,7 @@ class _CartScreenState extends State<CartScreen> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    '05AM - 08PM',
+                                    '05PM - 08PM',
                                     style: TextStyle(
                                       fontSize: 10,
                                       color: Colors.blueGrey.shade600,

@@ -10,7 +10,7 @@ class DioClient {
     baseUrl: dotenv.get('API_URL'),
     connectTimeout: Duration(seconds: 10),
     receiveTimeout: Duration(seconds: 10),
-    headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+    headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'x-lang': 'km'},
   ));
 
   static final FlutterSecureStorage _storage = FlutterSecureStorage();

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -630,16 +631,22 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                                               res['updated_at'] as String)));
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: const Text(
-                                          'បង្កើតដោយជោគជ័យ!'),
+                                      content: const Text('បង្កើតដោយជោគជ័យ!'),
                                       duration: const Duration(seconds: 2),
                                     ),
                                   );
                                   context.go(AppRoutes.checkIn);
                                 }
+                              } on DioException catch (e) {
+                                if (context.mounted) {
+                                  // print(e.response?.data?['message']);
+                                  showErrorDialog(context, "${e.response?.data?['message']}");
+                                }
+                                printError(
+                                    errorMessage: ErrorType.somethingWentWrong);
                               } catch (e) {
                                 if (context.mounted) {
-                                  showErrorDialog(context, "អតិថិជនមានរួចហើយ");
+                                  showErrorDialog(context, e.toString());
                                 }
                                 printError(
                                     errorMessage: ErrorType.somethingWentWrong);
