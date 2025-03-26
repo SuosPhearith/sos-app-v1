@@ -13,6 +13,7 @@ import 'package:wsm_mobile_app/screens/change_password_screen.dart';
 import 'package:wsm_mobile_app/screens/check_in_detail_screen.dart';
 import 'package:wsm_mobile_app/screens/check_in_screen.dart';
 import 'package:wsm_mobile_app/screens/customer_screen.dart';
+import 'package:wsm_mobile_app/screens/flavor_info_screen.dart';
 import 'package:wsm_mobile_app/screens/home_screen.dart';
 import 'package:wsm_mobile_app/screens/invoice_detail_screen.dart';
 import 'package:wsm_mobile_app/screens/login_screen.dart';
@@ -126,6 +127,11 @@ final GoRouter _router = GoRouter(
           child: const AuthLayout(child: ChangePasswordScreen())),
     ),
     GoRoute(
+      path: AppRoutes.flavorInfo,
+      builder: (context, state) =>
+          AuthMiddleware(child: const AuthLayout(child: FlavorInfoScreen())),
+    ),
+    GoRoute(
       path: '${AppRoutes.invoiceDetail}/:id', // Dynamic ":id" parameter
       builder: (context, state) {
         final String invoiceId = state.pathParameters['id'] ?? ''; // Get the ID
@@ -183,31 +189,36 @@ class _MainLayoutState extends State<MainLayout> {
               Positioned(
                 bottom: 10,
                 left: 10,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(
-                      color: Colors.cyanAccent,
-                      width: 2,
+                child: GestureDetector(
+                  onTap: () {
+                    context.push(AppRoutes.flavorInfo);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: Colors.cyanAccent,
+                        width: 2,
+                      ),
                     ),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 4,
-                    vertical: 2,
-                  ),
-                  child: const Text(
-                    'DEV',
-                    style: TextStyle(
-                      color: Colors.cyanAccent,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                      shadows: [
-                        Shadow(
-                          color: Colors.cyanAccent,
-                          blurRadius: 4,
-                        ),
-                      ],
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
+                    child: const Text(
+                      'DEV',
+                      style: TextStyle(
+                        color: Colors.cyanAccent,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        shadows: [
+                          Shadow(
+                            color: Colors.cyanAccent,
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -251,31 +262,36 @@ class AuthLayout extends StatelessWidget {
           Positioned(
             bottom: 10,
             left: 10,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(
-                  color: Colors.cyanAccent,
-                  width: 2,
+            child: GestureDetector(
+              onTap: () {
+                context.push(AppRoutes.flavorInfo);
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(
+                    color: Colors.cyanAccent,
+                    width: 2,
+                  ),
                 ),
-              ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 4,
-                vertical: 2,
-              ),
-              child: const Text(
-                'DEV',
-                style: TextStyle(
-                  color: Colors.cyanAccent,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                  shadows: [
-                    Shadow(
-                      color: Colors.cyanAccent,
-                      blurRadius: 4,
-                    ),
-                  ],
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 4,
+                  vertical: 2,
+                ),
+                child: const Text(
+                  'DEV',
+                  style: TextStyle(
+                    color: Colors.cyanAccent,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                    shadows: [
+                      Shadow(
+                        color: Colors.cyanAccent,
+                        blurRadius: 4,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

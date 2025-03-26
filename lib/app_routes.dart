@@ -14,4 +14,5 @@ class AppRoutes {
   static const String invoiceDetail = '/invoice-detail';
   static const String checkInDetail = '/check-in-detail';
   static const String changePassword = '/change-password';
+  static const String flavorInfo = '/flavor-infor';
 }
