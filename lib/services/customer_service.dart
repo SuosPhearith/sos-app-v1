@@ -61,6 +61,7 @@ class CustomerService {
     required String outletType,
     String lat = '',
     String lng = '',
+    String hotspot = '',
   }) async {
     try {
       final response = await DioClient.dio.post(
@@ -77,7 +78,8 @@ class CustomerService {
           "house_no": houseNo,
           "address_name": addressName,
           "lat": lat,
-          "lng": lng
+          "lng": lng,
+          "hotspot": hotspot,
         },
       );
       return response.data;

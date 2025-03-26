@@ -27,7 +27,7 @@ class NewCustomerScreen extends StatefulWidget {
 }
 
 class _NewCustomerScreenState extends State<NewCustomerScreen> {
-  String? _selectedOutletType;
+  Outlet? _selectedOutletType;
   Village? _selectedAddress;
 
   // TextEditingControllers for all fields
@@ -38,6 +38,7 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
   final TextEditingController _houseNumberController = TextEditingController();
   final TextEditingController _streetNumberController = TextEditingController();
   final TextEditingController _streetNameController = TextEditingController();
+  final TextEditingController _hotspotController = TextEditingController();
 
   @override
   void dispose() {
@@ -191,44 +192,6 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                                 ),
                               ),
                             ),
-                            // Padding(
-                            //   padding:
-                            //       const EdgeInsets.only(top: 8, right: 8, left: 8),
-                            //   child: SizedBox(
-                            //     height: 50,
-                            //     child: Container(
-                            //       decoration: BoxDecoration(
-                            //         borderRadius: BorderRadius.circular(8),
-                            //         border: Border.all(color: Colors.blue, width: 1),
-                            //         color: Colors.white,
-                            //       ),
-                            //       child: Row(
-                            //         children: [
-                            //           const Padding(
-                            //             padding: EdgeInsets.only(left: 10),
-                            //             child: Icon(Icons.phone,
-                            //                 color: Colors.black, size: 24),
-                            //           ),
-                            //           Expanded(
-                            //             child: Padding(
-                            //               padding: const EdgeInsets.symmetric(
-                            //                   vertical: 8, horizontal: 10),
-                            //               child: Text(
-                            //                 'លេខទូរស័ព្ទអតិថិជន',
-                            //                 style: const TextStyle(fontSize: 16),
-                            //               ),
-                            //             ),
-                            //           ),
-                            //           const Padding(
-                            //             padding: EdgeInsets.only(right: 10),
-                            //             child: Icon(Icons.arrow_drop_down_sharp,
-                            //                 color: Colors.black, size: 24),
-                            //           ),
-                            //         ],
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
                             Row(
                               children: [
                                 Padding(
@@ -284,8 +247,8 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                                                 vertical: 8, horizontal: 10),
                                             child: Text(
                                               _selectedOutletType != null
-                                                  ? _selectedOutletType
-                                                      .toString()
+                                                  ? _selectedOutletType?.name ??
+                                                      ""
                                                   : 'ជ្រើសរើសប្រភេទ Outlet',
                                               style:
                                                   const TextStyle(fontSize: 16),
@@ -384,7 +347,45 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                                 ),
                               ),
                             ),
-
+                            Row(
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 8, top: 8),
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(text: 'Hotspot'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8, left: 8),
+                              child: SizedBox(
+                                height: 50,
+                                child: TextField(
+                                  controller: _hotspotController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Hotspot',
+                                    prefixIcon: const Icon(Icons.maps_home_work,
+                                        color: Colors.black, size: 24),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: const BorderSide(
+                                          color: Colors.blue, width: 1),
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 8, horizontal: 10),
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                  ),
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            ),
                             SizedBox(height: 20),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -600,7 +601,8 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                                         name: _customerNameController.text,
                                         phone: _phoneController.text,
                                         phone2: _secondPhoneController.text,
-                                        outletType: _selectedOutletType ?? "",
+                                        outletType:
+                                            _selectedOutletType?.code ?? "",
                                         phone3: _thirdPhoneController.text,
                                         streetNo: _streetNumberController.text,
                                         houseNo: _houseNumberController.text,
@@ -614,7 +616,8 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                                             .toString(),
                                         lng: (checkOutProvider.checkIn?.lng ??
                                                 0.0)
-                                            .toString());
+                                            .toString(),
+                                        hotspot: _hotspotController.text);
                                 if (context.mounted) {
                                   Provider.of<SelectedCustomerProvider>(context,
                                           listen: false)
@@ -684,7 +687,7 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
   }
 
   void _outletModal(BuildContext context, List<Outlet> outlets,
-      void Function(String) onConfirm) {
+      void Function(Outlet) onConfirm) {
     Outlet? selectedOutlet;
     List<Outlet> filteredOutlets = List.from(outlets);
     TextEditingController searchController = TextEditingController();
@@ -896,7 +899,7 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                         child: ElevatedButton(
                           onPressed: selectedOutlet != null
                               ? () {
-                                  onConfirm(selectedOutlet?.code ?? "");
+                                  onConfirm(selectedOutlet!);
                                   Navigator.pop(context);
                                 }
                               : null,

@@ -133,6 +133,10 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
                               "លេខអតិថិជន: ${orderDetail!['customer']['id']}",
                               style: const TextStyle(fontSize: 16),
                             ),
+                            Text(
+                              "Hotspot: ${orderDetail!['customer']['hotspot'] ?? ""}",
+                              style: const TextStyle(fontSize: 16),
+                            ),
                             const SizedBox(height: 15),
                             Text(
                               "ថ្ងៃដឹក: ${orderDetail!['shipping']['delivery_date']}",
