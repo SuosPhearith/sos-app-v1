@@ -629,18 +629,15 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                                               res['created_at'] as String),
                                           updatedAt: DateTime.parse(
                                               res['updated_at'] as String)));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: const Text('បង្កើតដោយជោគជ័យ!'),
-                                      duration: const Duration(seconds: 2),
-                                    ),
-                                  );
+                                  showSuccess(context,
+                                      message: "បង្កើតដោយជោគជ័យ");
                                   context.go(AppRoutes.checkIn);
                                 }
                               } on DioException catch (e) {
                                 if (context.mounted) {
                                   // print(e.response?.data?['message']);
-                                  showErrorDialog(context, "${e.response?.data?['message']}");
+                                  showErrorDialog(context,
+                                      "${e.response?.data?['message']}");
                                 }
                                 printError(
                                     errorMessage: ErrorType.somethingWentWrong);

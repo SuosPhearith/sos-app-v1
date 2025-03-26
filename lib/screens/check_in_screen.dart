@@ -130,10 +130,12 @@ class _CheckInScreenState extends State<CheckInScreen> {
                                   if (context.mounted) {
                                     context.go(AppRoutes.home);
                                   }
+                                  if(context.mounted){
+                                    showSuccess(context, message: "ការ Check Out ជោគជ័យ");
+                                  }
                                 } catch (e) {
                                   if (context.mounted) {
-                                    showErrorDialog(
-                                        context, ErrorType.somethingWentWrong);
+                                    showError(context, message: "ការCheck Outមានបញ្ហា!");
                                   }
                                 }
                               });
@@ -325,13 +327,22 @@ class _CheckInScreenState extends State<CheckInScreen> {
                                                 "បញ្ចាក់ការលុប",
                                                 "តើអ្នកពិតជាចង់លុបមែនទេ",
                                                 DialogType.danger, () async {
-                                              final CheckInService
+                                              try{
+                                                final CheckInService
                                                   checkInService =
                                                   CheckInService();
                                               await checkInService.voidOrder(
                                                   id: order);
                                               checkOutProvider.removeOrdered(
                                                   order: order);
+                                              if(context.mounted){
+                                                showSuccess(context, message: "លុបដោយជោគជ័យ");
+                                              }
+                                              }catch(e){
+                                                if(context.mounted){
+                                                  showError(context, message: "លុបមិនជោគជ័យ");
+                                                }
+                                              }
                                             });
                                           },
                                           child: const Icon(Icons.delete,

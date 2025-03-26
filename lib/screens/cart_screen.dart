@@ -388,29 +388,30 @@ class _CartScreenState extends State<CartScreen> {
                         "បញ្ជាក់ការកម្ម៉ង់",
                         "តើអ្នកពិតជាចង់ដាក់ការកម្ម៉ង់មែនទេ?",
                         DialogType.primary, () async {
-                      final CartService cartService = CartService();
-                      Map<String, dynamic> res = await cartService.makeOrder(
-                          cart: cartProvider.cart,
-                          customerId:
-                              selectedCustomerProvider.selectedCustomer?.id ??
-                                  '',
-                          deliveryDate:
-                              Help.convertDateFormat(_dateController.text),
-                          timeSlot: _timeController.text,
-                          remark: _remarkController.text);
-                      if (context.mounted) {
-                        Provider.of<CheckOutProvider>(context, listen: false)
-                            .addOrdered(orderNo: res['order_no']);
-                      }
-                      cartProvider.clearCart();
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: const Text('កម្ម៉ង់ជោគជ័យ!'),
-                            duration: const Duration(seconds: 2),
-                          ),
-                        );
-                        context.go(AppRoutes.checkIn);
+                      try {
+                        final CartService cartService = CartService();
+                        Map<String, dynamic> res = await cartService.makeOrder(
+                            cart: cartProvider.cart,
+                            customerId:
+                                selectedCustomerProvider.selectedCustomer?.id ??
+                                    '',
+                            deliveryDate:
+                                Help.convertDateFormat(_dateController.text),
+                            timeSlot: _timeController.text,
+                            remark: _remarkController.text);
+                        if (context.mounted) {
+                          Provider.of<CheckOutProvider>(context, listen: false)
+                              .addOrdered(orderNo: res['order_no']);
+                        }
+                        cartProvider.clearCart();
+                        if (context.mounted) {
+                          showSuccess(context, message: 'កម្ម៉ង់ជោគជ័យ!');
+                          context.go(AppRoutes.checkIn);
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          showError(context, message: 'កម្ម៉ង់មានបញ្ហា!');
+                        }
                       }
                     });
                   },

@@ -136,7 +136,7 @@ void showErrorDialog(
                 color: Colors.black87,
               ),
               textAlign: TextAlign.center, // Center title
-            ),// Spacing before button
+            ), // Spacing before button
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity, // Full-width button
@@ -149,7 +149,7 @@ void showErrorDialog(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-          
+
                 child: const Text(
                   "បិទ", // "OK" in Khmer
                   style: TextStyle(
@@ -327,3 +327,22 @@ void showConfirmDialogWithNavigationOfSaleInvoice(BuildContext context,
   );
 }
 
+void showSuccess(BuildContext context, {String message = "ជោគជ័យ!"}) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message),
+      duration: const Duration(seconds: 2),
+      backgroundColor: Colors.green,
+    ),
+  );
+}
+
+void showError(BuildContext context, {String message = "មិនជោគជ័យ!"}) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message),
+      duration: const Duration(seconds: 2),
+      backgroundColor: Colors.red,
+    ),
+  );
+}

@@ -174,13 +174,8 @@ class ChangePasswordScreen extends StatelessWidget {
                             );
                             // Optionally show success message or navigate back
                             if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: const Text(
-                                      'ពាក្យសម្ងាត់ផ្លាស់ប្តូរដោយជោគជ័យ!'),
-                                  duration: const Duration(seconds: 2),
-                                ),
-                              );
+                              showSuccess(context,
+                                  message: "ពាក្យសម្ងាត់ផ្លាស់ប្តូរដោយជោគជ័យ!");
                               Navigator.pop(
                                   context); // Example: go back on success
                             }

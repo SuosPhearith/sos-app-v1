@@ -153,16 +153,27 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                                 "បញ្ជាក់ការលុប",
                                                 "តើអ្នកពិចជាចង់លុបមែនទេ?",
                                                 DialogType.danger, () async {
-                                              final CustomerService
-                                                  customerService =
-                                                  CustomerService();
-                                              await customerService
-                                                  .removeCustomer(
-                                                      id: customer.id);
-                                              selectedCustomerProvider
-                                                  .clearSelectedCustomer();
-                                              await customerProvider
-                                                  .getCustomers(); // error here
+                                              try {
+                                                final CustomerService
+                                                    customerService =
+                                                    CustomerService();
+                                                await customerService
+                                                    .removeCustomer(
+                                                        id: customer.id);
+                                                selectedCustomerProvider
+                                                    .clearSelectedCustomer();
+                                                if (context.mounted) {
+                                                  showSuccess(context);
+                                                }
+                                                await customerProvider
+                                                    .getCustomers();
+                                              } catch (e) {
+                                                if (context.mounted) {
+                                                  showError(context,
+                                                      message:
+                                                          'មិនអាចលុបបានទេ!');
+                                                }
+                                              }
                                             });
                                           },
                                         );

@@ -10,6 +10,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
+import 'package:wsm_mobile_app/widgets/helper.dart';
+
 class InvoiceDetailScreen extends StatefulWidget {
   final String invoiceId;
 
@@ -304,12 +306,7 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
     if (image == null) return;
     await saveImage(image);
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Invoice saved successfully!'),
-          duration: Duration(seconds: 2),
-        ),
-      );
+      showSuccess(context, message: "រក្សាទុកដោយជោគជ័យ!");
     }
   }
 
@@ -332,12 +329,7 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
     } catch (e) {
       debugPrint('Error sharing invoice: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to share invoice.'),
-            duration: Duration(seconds: 2),
-          ),
-        );
+        showError(context, message: "មិនអាច Share បានទេ!");
       }
     }
   }
