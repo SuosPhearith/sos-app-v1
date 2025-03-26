@@ -5,7 +5,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:wsm_mobile_app/app_routes.dart';
-import 'package:wsm_mobile_app/error_type.dart';
 import 'package:wsm_mobile_app/models/cart_modal.dart';
 import 'package:wsm_mobile_app/models/category_model.dart';
 import 'package:wsm_mobile_app/models/check_in_modal.dart';
