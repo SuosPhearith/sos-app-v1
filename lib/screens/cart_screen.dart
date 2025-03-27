@@ -489,126 +489,43 @@ class _CartScreenState extends State<CartScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              onConfirm('09AM - 12PM');
-                              Navigator.pop(
-                                  context); // Close modal after selection
-                            },
-                            child: Container(
-                              width: 120, // Fixed width for consistency
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 10),
-                              decoration: BoxDecoration(
-                                color: Colors.blue.shade50,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                    color: Colors.blue.shade300, width: 1.2),
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const Text(
-                                    'ពេលព្រឹក',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.blueAccent,
+                          ...Provider.of<CartProvider>(context, listen: false)
+                              .timeSlots
+                              .map((timeSlot) {
+                            return GestureDetector(
+                              onTap: () {
+                                onConfirm(timeSlot);
+                                Navigator.pop(
+                                    context); // Close modal after selection
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(bottom: 8),
+                                width: 120, // Fixed width for consistency
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue.shade50,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                      color: Colors.blue.shade300, width: 1.2),
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      timeSlot,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blueAccent,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '09AM - 12PM',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.blueGrey.shade600,
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          ),
-                          const SizedBox(height: 8), // Gap between items
-                          GestureDetector(
-                            onTap: () {
-                              onConfirm('01PM - 04PM');
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                              width: 120,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 10),
-                              decoration: BoxDecoration(
-                                color: Colors.blue.shade50,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                    color: Colors.blue.shade300, width: 1.2),
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const Text(
-                                    'ពេលថ្ងៃ',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.blueAccent,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '01PM - 04PM',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.blueGrey.shade600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          GestureDetector(
-                            onTap: () {
-                              onConfirm('05PM - 08PM');
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                              width: 120,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 10),
-                              decoration: BoxDecoration(
-                                color: Colors.blue.shade50,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                    color: Colors.blue.shade300, width: 1.2),
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const Text(
-                                    'ពេលរសៀល',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.blueAccent,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '05PM - 08PM',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.blueGrey.shade600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                            );
+                          })
                         ],
                       ),
                     ),

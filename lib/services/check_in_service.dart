@@ -156,16 +156,6 @@ class CheckInService {
       // Fallback to last known position if timeout occurs
       final lastPosition = await Geolocator.getLastKnownPosition();
       if (lastPosition != null) {
-        // Get address for last known position
-        // List<Placemark> placemarks = await placemarkFromCoordinates(
-        //   lastPosition.latitude,
-        //   lastPosition.longitude,
-        // );
-
-        // String address = placemarks.isNotEmpty
-        //     ? '${placemarks[0].street}, ${placemarks[0].locality}, ${placemarks[0].country}'
-        //     : 'Unknown location';
-
         return {
           'lat': lastPosition.latitude,
           'lng': lastPosition.longitude,

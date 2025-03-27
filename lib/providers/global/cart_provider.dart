@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:wsm_mobile_app/models/cart_modal.dart';
+import 'package:wsm_mobile_app/services/cart_service.dart';
 
 class CartProvider extends ChangeNotifier {
   // Feilds
   bool _isLoading = false;
   String? _error;
   final List<Cart> _cart = [];
+  List<String> _timeSlots = [];
 
   // Services
 
@@ -13,12 +15,13 @@ class CartProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
   List<Cart> get cart => _cart;
+  List<String> get timeSlots => _timeSlots;
 
   // Setters
 
   // Initialize
   CartProvider() {
-    // getHome();
+    getHome();
   }
 
   // Functions
@@ -82,7 +85,9 @@ class CartProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      // Do anything
+      final CartService cartService = CartService();
+      List<String> response = await cartService.getTimeSlot();
+      _timeSlots = response;
     } catch (e) {
       _error = "Invalid Credential.";
     } finally {

@@ -144,16 +144,20 @@ class _CheckInDetailScreenState extends State<CheckInDetailScreen> {
                           ),
                         ),
                         _buildInfoCard([
-                          _buildInfoRow('Name',
+                          _buildInfoRow('ឈ្មោះ',
                               checkInDetail?['customer']?['name'] ?? 'N/A'),
                           _buildInfoRow(
-                              'Phone',
+                              'ទូរស័ព្ទ',
                               checkInDetail?['customer']?['phone_number'] ??
                                   'N/A'),
                           _buildInfoRow(
-                              'Address',
+                              'អាសយដ្ឋាន',
                               checkInDetail?['customer']?['address_name'] ??
-                                  'Not provided'),
+                                  ''),
+                          _buildInfoRow(
+                              'Hotspot',
+                              checkInDetail?['customer']?['hotspot'] ??
+                                  ''),
                           checkInDetail?['customer']?['lat'] != null
                               ? ElevatedButton.icon(
                                   onPressed: () async {

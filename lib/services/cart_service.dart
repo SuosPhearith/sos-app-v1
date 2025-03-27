@@ -57,4 +57,34 @@ class CartService {
       throw Exception(ErrorType.unexpectedError);
     }
   }
+
+  Future<List<String>> getTimeSlot() async {
+    try {
+      final response = await DioClient.dio.get(
+        "/api/mobile/time-slot",
+      );
+      if (response.data is List) {
+        return List<String>.from(response.data);
+      } else {
+        throw Exception("API response is not a list");
+      }
+    } on DioException catch (dioError) {
+      if (dioError.response != null) {
+        printError(
+          errorMessage: ErrorType.requestError,
+          statusCode: dioError.response!.statusCode,
+        );
+        throw Exception(ErrorType.requestError);
+      } else {
+        printError(
+          errorMessage: ErrorType.networkError,
+          statusCode: null,
+        );
+        throw Exception(ErrorType.networkError);
+      }
+    } catch (e) {
+      printError(errorMessage: 'Something went wrong.', statusCode: 500);
+      throw Exception(ErrorType.unexpectedError);
+    }
+  }
 }
