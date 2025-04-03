@@ -1,0 +1,1 @@
+/Users/seyhake/Development/project/dms/sos-app/build/app/intermediates/cxx/RelWithDebInfo/4l5xzl2t/obj/x86_64

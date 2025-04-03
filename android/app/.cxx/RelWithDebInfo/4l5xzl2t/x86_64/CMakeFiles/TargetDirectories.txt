@@ -1,0 +1,2 @@
+/Users/seyhake/Development/project/dms/sos-app/android/app/.cxx/RelWithDebInfo/4l5xzl2t/x86_64/CMakeFiles/edit_cache.dir
+/Users/seyhake/Development/project/dms/sos-app/android/app/.cxx/RelWithDebInfo/4l5xzl2t/x86_64/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/seyhake/Development/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/seyhake/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/seyhake/Development/project/dms/sos-app/android/app/.cxx/Debug/5j3m5q2a/arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/seyhake/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/seyhake/Development/project/dms/sos-app/android/app/.cxx/Debug/5j3m5q2a/arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}
